@@ -8,8 +8,9 @@
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [ValidateSet('Diagnose', 'FullHealth', 'Bundle', 'ExportDrivers', 'BackupDrivers', 'Menu', 'Help', 'Timeline')]
+    [ValidateSet('Diagnose', 'FullHealth', 'Bundle', 'ExportDrivers', 'BackupDrivers', 'Menu', 'Help', 'Timeline', 'SaveBaseline', 'CompareBaseline')]
     [string]$Action = 'Menu',
+    [string]$BaselineFile = $null,
     [int]$HoursBack = 0,
     [switch]$IncludeSensitiveNetworkData
 )
@@ -37,6 +38,7 @@ $ModulesDir = Join-Path $AppDir "modules"
 Import-Module (Join-Path $ModulesDir "NetworkInventory.psm1") -Force
 Import-Module (Join-Path $ModulesDir "NetworkHealth.psm1") -Force
 Import-Module (Join-Path $ModulesDir "DiagnosticArtifacts.psm1") -Force
+Import-Module (Join-Path $ModulesDir "NetworkBaseline.psm1") -Force
 
 function Test-IsAdmin {
     $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
@@ -383,12 +385,31 @@ try {
             Export-NetworkDrivers -ToolRoot $ToolRoot @fwd
         }
 
+        'SaveBaseline' {
+            $fwd = @{}
+            if ($PSBoundParameters.ContainsKey('WhatIf')) { $fwd['WhatIf'] = $WhatIfPreference }
+            $res = Save-NetworkBaseline -ToolRoot $ToolRoot @fwd
+            exit $res.ExitCode
+        }
+
+        'CompareBaseline' {
+            $fwd = @{}
+            if ($PSBoundParameters.ContainsKey('WhatIf')) { $fwd['WhatIf'] = $WhatIfPreference }
+            if ($PSBoundParameters.ContainsKey('BaselineFile') -and -not [string]::IsNullOrWhiteSpace($BaselineFile)) {
+                $fwd['BaselineFile'] = $BaselineFile
+            }
+            $res = Compare-NetworkBaseline -ToolRoot $ToolRoot @fwd
+            exit $res.ExitCode
+        }
+
         'Help' {
             Write-Host "便携网络诊断工具箱使用帮助:" -ForegroundColor Cyan
             Write-Host "  -Action FullHealth / Diagnose  : 执行纯只读网络健康诊断并输出控制台"
             Write-Host "  -Action Timeline [-HoursBack N]: 执行断网时间线关联分析 (默认 24 小时)"
             Write-Host "  -Action Bundle                 : 采集脱敏日志并打包为 output\*.zip"
             Write-Host "  -Action BackupDrivers          : 使用 PnPUtil 只读备份驱动至 backups\Drivers"
+            Write-Host "  -Action SaveBaseline           : 保存当前网络健康与配置基线 (退出码: 0成功, 1错误)"
+            Write-Host "  -Action CompareBaseline        : 与基线比对差异 (退出码: 0无差异, 2有差异, 1错误)"
             Write-Host "  -Action Menu                   : 打开交互式主菜单 (默认)"
             Write-Host "  -IncludeSensitiveNetworkData   : 包含完整 WLAN 与未脱敏数据"
         }
@@ -410,9 +431,11 @@ try {
                 Write-Host "   [2] Generate Diagnostic Log Bundle (ZIP) (生成诊断报告与脱敏压缩包)" -ForegroundColor White
                 Write-Host "   [3] Export Third-Party Network Driver Catalog (导出第三方网络驱动清单与包)" -ForegroundColor White
                 Write-Host "   [4] Analyze Disconnection Timeline (断网时间线关联分析)" -ForegroundColor White
+                Write-Host "   [5] Save Health Baseline (保存当前健康基线)" -ForegroundColor White
+                Write-Host "   [6] Compare With Baseline (与基线比对差异)" -ForegroundColor White
                 Write-Host "   [0] Exit (退出工具箱)" -ForegroundColor Gray
                 Write-Host "=======================================================================" -ForegroundColor Cyan
-                Write-Host "请输入选项数字 [0-4]: " -ForegroundColor Yellow -NoNewline
+                Write-Host "请输入选项数字 [0-6]: " -ForegroundColor Yellow -NoNewline
                 $choice = Read-Host
 
                 switch ($choice.Trim()) {
@@ -424,6 +447,20 @@ try {
                             $hVal = [int]$hInput.Trim()
                         }
                         Invoke-RunTimelineAnalysis -Hours $hVal
+                        Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                    }
+                    '5' {
+                        Save-NetworkBaseline -ToolRoot $ToolRoot
+                        Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                    }
+                    '6' {
+                        Write-Host "Enter baseline file name (or leave empty to compare with latest): " -ForegroundColor Yellow -NoNewline
+                        $bInput = Read-Host
+                        $bFwd = @{}
+                        if (-not [string]::IsNullOrWhiteSpace($bInput)) {
+                            $bFwd['BaselineFile'] = $bInput.Trim()
+                        }
+                        Compare-NetworkBaseline -ToolRoot $ToolRoot @bFwd
                         Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
                     }
                     '1' { Invoke-RunDiagnosis; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }

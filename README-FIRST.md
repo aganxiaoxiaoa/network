@@ -31,7 +31,8 @@ Network-Recovery-USB\
 │   └── modules\
 │       ├── NetworkInventory.psm1 # 网络清单与静态信息采集模块
 │       ├── NetworkHealth.psm1    # 纯只读健康探测模块
-│       └── DiagnosticArtifacts.psm1 # 诊断脱敏报告与驱动备份模块
+│       ├── DiagnosticArtifacts.psm1 # 诊断脱敏报告与驱动备份模块
+│       └── NetworkBaseline.psm1  # 健康基线保存与差异比对模块 (纯只读)
 ├── docs\
 │   ├── 使用说明.md               # 详细使用指南
 │   ├── 安全边界.md               # 严密的安全红线与机制说明
@@ -45,7 +46,7 @@ Network-Recovery-USB\
 │   └── Network-Reference-Watchdog/
 ├── quarantine\                   # 危险历史版本隔离区 (已加 .disabled 禁用)
 │   └── unsafe-version-20260910-0130/
-├── output\                       # 诊断报告压缩包生成目录
+├── output\                       # 诊断报告压缩包与健康基线目录 (含 baseline\)
 └── logs\                         # 运行日志目录
 ```
 
@@ -64,6 +65,10 @@ Network-Recovery-USB\
      调用 `Export-NetworkDrivers`。若当前为普通用户权限，检测到未提权后打印 `Driver catalog export requires Administrator privileges.` 及 `Relaunching with elevation...`，通过 UAC 弹窗提权启动新进程只读导出至 `backups\network-drivers-*` 目录；若已具备管理员权限则直接运行 `pnputil /export-driver` 备份。
    - `[4] Analyze Disconnection Timeline (断网时间线关联分析)`：
      调用 `Invoke-RunTimelineAnalysis`，三路只读合并分析 WLAN Operational 日志、System 日志关键网络事件与本机看门狗日志（可选）。统计断开事件次数、连接失败次数、密钥交换超时、异常 RSSI 值（如 255）及看门狗动作执行历史。控制台展示汇总统计与最近 20 条事件流，完整时序表自动落盘写入 `logs\timeline_*.log`。末尾附带官方免责说明：“以上仅为时间相关性，不构成因果结论。”
+   - `[5] Save Health Baseline (保存当前健康基线)`：
+     调用 `Save-NetworkBaseline`，采集当前网络配置与健康状态结构化快照并保存至 `output\baseline\baseline-yyyyMMdd-HHmmss.json`，同时更新纯相对文件名指针 `output\baseline\latest.txt`（严格无盘符）。退出码：0 成功，1 错误。
+   - `[6] Compare With Baseline (与基线比对差异)`：
+     调用 `Compare-NetworkBaseline`，支持交互输入指定基线文件或直接回车比对由 `latest.txt` 指向的最近基线。精准比对 13 项核心稳定字段与 10 项易变参考指标，明细自动落盘写入 `logs\baseline_compare_*.log`。退出码：0 稳定字段无差异，2 发现核心稳定字段差异 (潜在网络异常)，1 执行错误。
    - `[0] Exit (退出工具箱)`：
      打印 `Exiting.`，跳出主循环并释放单实例互斥锁退出。
 
@@ -72,6 +77,8 @@ Network-Recovery-USB\
    - `-Action Timeline [-HoursBack N]`：执行断网时间线关联分析 (默认回溯 24 小时)
    - `-Action Bundle`：生成脱敏诊断报告并打包至 `output\`
    - `-Action BackupDrivers` / `-Action ExportDrivers`：导出第三方网络驱动至 `backups\`
+   - `-Action SaveBaseline`：保存当前网络健康与配置基线 (退出码: 0成功, 1错误)
+   - `-Action CompareBaseline [-BaselineFile <文件名或路径>]`：与基线比对差异 (退出码: 0无差异, 2有差异, 1错误)
    - `-Action Menu`：打开交互式主菜单 (默认)
    - `-Action Help`：查看帮助信息
 

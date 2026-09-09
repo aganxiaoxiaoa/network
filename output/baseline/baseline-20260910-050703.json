@@ -1,0 +1,52 @@
+﻿{
+    "Metadata":  {
+                     "Timestamp":  "2026-09-10 05:07:03",
+                     "ComputerName":  "TANG",
+                     "OSVersion":  "Microsoft Windows 11 家庭版 中文版",
+                     "ToolVersion":  "2.0-ReadOnly"
+                 },
+    "Stable":  {
+                   "InterfaceGuid":  "{4D0F3A41-0043-4F78-BED7-E5F84547850A}",
+                   "MacAddress":  "A8-E2-91-14-0F-D0",
+                   "InterfaceDescription":  "MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card",
+                   "HardwareInterface":  true,
+                   "DhcpEnabled":  true,
+                   "DnsServers":  [
+                                      "192.168.1.1",
+                                      "192.168.100.1"
+                                  ],
+                   "DefaultGateway":  "192.168.0.1",
+                   "ProxyEnable":  1,
+                   "ProxyServer":  "127.0.0.1:7897",
+                   "ProxyOverride":  "localhost;127.*;192.168.*;10.*;172.16.*;172.17.*;172.18.*;172.19.*;172.20.*;172.21.*;172.22.*;172.23.*;172.24.*;172.25.*;172.26.*;172.27.*;172.28.*;172.29.*;172.30.*;172.31.*;\u003clocal\u003e",
+                   "AutoConfigURL":  "",
+                   "ServiceStartTypes":  {
+                                             "Dhcp":  "Automatic",
+                                             "Dnscache":  "Automatic",
+                                             "nsi":  "Automatic",
+                                             "Wlansvc":  "Automatic",
+                                             "NlaSvc":  "Manual",
+                                             "WinHttpAutoProxySvc":  "Manual"
+                                         },
+                   "IPv6HasDefaultRoute":  false
+               },
+    "Volatile":  {
+                     "IPv4Address":  "192.168.0.101",
+                     "DhcpRemainingMinutes":  91.7,
+                     "LinkSpeed":  "300 Mbps",
+                     "ReceiveRate":  null,
+                     "TransmitRate":  null,
+                     "SignalPercent":  null,
+                     "RssiEstimated":  null,
+                     "RouteMetric":  0,
+                     "EffectiveMetric":  40,
+                     "ServiceStatuses":  {
+                                             "Dhcp":  "Running",
+                                             "Dnscache":  "Running",
+                                             "nsi":  "Running",
+                                             "Wlansvc":  "Running",
+                                             "NlaSvc":  "Stopped",
+                                             "WinHttpAutoProxySvc":  "Running"
+                                         }
+                 }
+}

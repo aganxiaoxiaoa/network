@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # NetworkRecovery.Config.psd1
 # 便携网络只读诊断工具箱配置文件
 # 所有路径均基于相对路径 ($ToolRoot)
@@ -25,7 +25,7 @@
     MinFreeSpaceMBForDrivers = 500
 
     # --------------------------------------------------------------------------
-    # 断网时间线关联分析配置 (新增)
+    # 断网时间线关联分析配置
     # --------------------------------------------------------------------------
 
     # 默认回溯时长 (小时)
@@ -35,14 +35,6 @@
     WatchdogLogPath = "D:\agentNeural Network Knowledge Base\network\network_recovery.log"
 
     # 时间线分析纳入的 System 日志网络 Provider 列表
-    # 基于实机枚举结果：
-    # - mtkwlex: 物理无线网卡 (MediaTek MT7922) 底层驱动
-    # - Microsoft-Windows-WLAN-AutoConfig: 系统 WLAN 核心自动配置服务
-    # - Microsoft-Windows-DNS-Client: 域名解析服务与超时事件 (ID 1014)
-    # - Tcpip: TCP/IP 协议栈接口绑定与错误 (ID 4207)
-    # - Microsoft-Windows-Dhcp-Client: IPv4 DHCP 租约服务
-    # - Microsoft-Windows-DHCPv6-Client: IPv6 DHCP 租约服务
-    # - Service Control Manager: 服务启停与状态流转 (ID 7036/7040/7045)
     TimelineSystemProviders = @(
         "mtkwlex",
         "Microsoft-Windows-WLAN-AutoConfig",
@@ -76,4 +68,39 @@
         # 异常 RSSI 判定数值 (例如 255 表示网络不可用/探测异常)
         AbnormalRssiValues = @(255)
     }
+
+    # --------------------------------------------------------------------------
+    # 健康基线保存与差异比对配置 (新增)
+    # --------------------------------------------------------------------------
+
+    # 稳定字段列表 (默认参与异常比对，任何变化均视为潜在网络异常)
+    BaselineStableFields = @(
+        "InterfaceGuid",
+        "MacAddress",
+        "InterfaceDescription",
+        "HardwareInterface",
+        "DhcpEnabled",
+        "DnsServers",
+        "DefaultGateway",
+        "ProxyEnable",
+        "ProxyServer",
+        "ProxyOverride",
+        "AutoConfigURL",
+        "ServiceStartTypes",
+        "IPv6HasDefaultRoute"
+    )
+
+    # 易变字段列表 (默认不参与异常判定，单独列出作为环境参考信息)
+    BaselineVolatileFields = @(
+        "IPv4Address",
+        "DhcpRemainingMinutes",
+        "LinkSpeed",
+        "ReceiveRate",
+        "TransmitRate",
+        "SignalPercent",
+        "RssiEstimated",
+        "RouteMetric",
+        "EffectiveMetric",
+        "ServiceStatuses"
+    )
 }
