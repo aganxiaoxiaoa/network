@@ -1,0 +1,126 @@
+#Requires -Version 5.1
+<#
+  manage_watchdog.ps1
+  The ONLY supported way to start/stop/inspect the network watchdog
+  (auto_network_recovery.ps1). Do not run that script directly with
+  `powershell -file` -- that is exactly how two independent AI sessions
+  ended up running two copies at once on 2026-08-09, which fought over the
+  Wi-Fi adapter and caused real outages. This script always goes through a
+  single Scheduled Task so there is never more than one instance.
+
+  Usage:
+    powershell -File manage_watchdog.ps1 -Install     # register + start the logon task
+    powershell -File manage_watchdog.ps1 -Uninstall   # remove the task (stops autostart)
+    powershell -File manage_watchdog.ps1 -Status       # show task state, PID, recent log lines
+    powershell -File manage_watchdog.ps1 -Stop         # stop the running instance only
+#>
+
+[CmdletBinding(DefaultParameterSetName = 'Status')]
+param(
+    [Parameter(ParameterSetName = 'Install')]   [switch] $Install,
+    [Parameter(ParameterSetName = 'Uninstall')] [switch] $Uninstall,
+    [Parameter(ParameterSetName = 'Status')]    [switch] $Status,
+    [Parameter(ParameterSetName = 'Stop')]      [switch] $Stop
+)
+
+$TaskName   = 'NetworkRecoveryWatchdog'
+$ScriptDir  = 'D:\agentNeural Network Knowledge Base\network'
+$ScriptPath = Join-Path $ScriptDir 'auto_network_recovery.ps1'
+$LogPath    = Join-Path $ScriptDir 'network_recovery.log'
+
+function Assert-Admin {
+    $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    if (-not $isAdmin) {
+        Write-Error 'This action requires an elevated (Administrator) PowerShell session, because the watchdog needs admin rights to cycle the Wi-Fi adapter.'
+        exit 1
+    }
+}
+
+function Install-Watchdog {
+    Assert-Admin
+    if (-not (Test-Path $ScriptPath)) { throw "Watchdog script not found: $ScriptPath" }
+
+    $action  = New-ScheduledTaskAction -Execute 'powershell.exe' `
+        -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$ScriptPath`""
+    $trigger = New-ScheduledTaskTrigger -AtLogOn
+    $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -RunLevel Highest -LogonType Interactive
+    $settings = New-ScheduledTaskSettingsSet `
+        -MultipleInstances IgnoreNew `
+        -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1) `
+        -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+        -ExecutionTimeLimit ([TimeSpan]::Zero) `
+        -StartWhenAvailable
+
+    $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    if ($existing) {
+        Write-Host "Task '$TaskName' already exists; updating definition."
+        Set-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings | Out-Null
+    } else {
+        Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Description 'Network/proxy watchdog (auto_network_recovery.ps1). Single-instance via IgnoreNew + Mutex.' | Out-Null
+        Write-Host "Task '$TaskName' registered."
+    }
+
+    Start-ScheduledTask -TaskName $TaskName
+    Start-Sleep -Seconds 2
+    Show-Status
+}
+
+function Uninstall-Watchdog {
+    Assert-Admin
+    $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    if (-not $existing) { Write-Host "Task '$TaskName' is not registered."; return }
+    Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
+    Write-Host "Task '$TaskName' unregistered. It will not auto-start on next logon."
+}
+
+function Stop-Watchdog {
+    Assert-Admin
+    $existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    if ($existing) {
+        Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+        Write-Host "Stopped task '$TaskName' (still registered; will auto-start again at next logon unless -Uninstall is used)."
+    } else {
+        Write-Host "Task '$TaskName' is not registered; nothing to stop via the task."
+    }
+    # Also stop any process running this script path, in case it was started outside the task.
+    $procs = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
+        Where-Object { $_.CommandLine -and $_.CommandLine -like "*auto_network_recovery.ps1*" }
+    foreach ($p in $procs) {
+        Write-Host "Stopping stray process PID $($p.ProcessId)"
+        Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Show-Status {
+    $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+    if (-not $task) {
+        Write-Host "Task '$TaskName': NOT REGISTERED. Run -Install to set it up."
+    } else {
+        $info = Get-ScheduledTaskInfo -TaskName $TaskName
+        Write-Host "Task '$TaskName': State=$($task.State)  LastRunTime=$($info.LastRunTime)  LastResult=$($info.LastTaskResult)"
+    }
+
+    $procs = Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" |
+        Where-Object { $_.CommandLine -and $_.CommandLine -like "*auto_network_recovery.ps1*" }
+    if ($procs) {
+        foreach ($p in $procs) { Write-Host "  Running instance: PID $($p.ProcessId), started $($p.CreationDate)" }
+        if (@($procs).Count -gt 1) { Write-Warning "MORE THAN ONE INSTANCE IS RUNNING (should never happen with the Mutex + IgnoreNew task policy). Investigate." }
+    } else {
+        Write-Host '  No running instance found.'
+    }
+
+    if (Test-Path $LogPath) {
+        Write-Host "`n--- last 15 log lines ($LogPath) ---"
+        Get-Content -Path $LogPath -Tail 15
+    } else {
+        Write-Host "`nNo log file yet at $LogPath"
+    }
+}
+
+switch ($PSCmdlet.ParameterSetName) {
+    'Install'   { Install-Watchdog }
+    'Uninstall' { Uninstall-Watchdog }
+    'Stop'      { Stop-Watchdog }
+    default     { Show-Status }
+}
