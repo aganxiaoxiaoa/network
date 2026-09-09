@@ -1867,6 +1867,7 @@ function Get-NetworkEventTimeline {
     $warnings = [System.Collections.Generic.List[string]]::new()
     $rssiAbnormalCounts = 0
     $disconnectCounts = 0
+    $securityStoppedCounts = 0
     $reconnectFailureCounts = 0
     $keyExchangeTimeoutCounts = 0
     $watchdogActionCounts = 0
@@ -1883,11 +1884,12 @@ function Get-NetworkEventTimeline {
         }
     }
 
-    $disconnectIds = if ($classMap.Contains('DisconnectEventIds')) { $classMap['DisconnectEventIds'] } else { @(8003, 11004) }
-    $failureIds    = if ($classMap.Contains('ConnectionFailureEventIds')) { $classMap['ConnectionFailureEventIds'] } else { @(8002) }
-    $timeoutIds    = if ($classMap.Contains('KeyExchangeTimeoutEventIds')) { $classMap['KeyExchangeTimeoutEventIds'] } else { @(11006) }
-    $assocIds      = if ($classMap.Contains('AssociationEventIds')) { $classMap['AssociationEventIds'] } else { @(8000, 8001, 11000, 11001, 11005, 11010) }
-    $abnormalRssi  = if ($classMap.Contains('AbnormalRssiValues')) { $classMap['AbnormalRssiValues'] } else { @(255) }
+    $disconnectIds      = if ($classMap.Contains('DisconnectEventIds')) { $classMap['DisconnectEventIds'] } else { @(8003) }
+    $securityStoppedIds = if ($classMap.Contains('SecurityStoppedEventIds')) { $classMap['SecurityStoppedEventIds'] } else { @(11004) }
+    $failureIds         = if ($classMap.Contains('ConnectionFailureEventIds')) { $classMap['ConnectionFailureEventIds'] } else { @(8002) }
+    $timeoutIds         = if ($classMap.Contains('KeyExchangeTimeoutEventIds')) { $classMap['KeyExchangeTimeoutEventIds'] } else { @(11006) }
+    $assocIds           = if ($classMap.Contains('AssociationEventIds')) { $classMap['AssociationEventIds'] } else { @(8000, 8001, 11000, 11001, 11005, 11010) }
+    $abnormalRssi       = if ($classMap.Contains('AbnormalRssiValues')) { $classMap['AbnormalRssiValues'] } else { @(255) }
 
     # --------------------------------------------------------------------------
     # 1. 来源一：WLAN 事件 (Operational 日志)
@@ -1922,8 +1924,8 @@ function Get-NetworkEventTimeline {
                     $reason = if ($msg -match '(?i)(?:Reason|原因)\s*:\s*(.+)') { $matches[1].Trim() } else { "网络被驱动程序断开" }
                     $summary = "无线网络被断开 [原因: $reason]"
                 } elseif ($eid -eq 11004) {
-                    $disconnectCounts++
-                    $summary = "无线安全已停止 (Security stopped)"
+                    $securityStoppedCounts++
+                    $summary = "无线安全已停止 (正常会话拆除，非故障)"
                 } elseif ($eid -eq 11006) {
                     $keyExchangeTimeoutCounts++
                     $summary = "动态密钥交换在配置的时间范围内未能成功"
@@ -2145,9 +2147,9 @@ function Get-NetworkEventTimeline {
             $enterTimes = @($standbyData.PowerEvents | Where-Object { $_.Classification -eq 'EnterLowPower' } | ForEach-Object { $_.Timestamp })
         }
 
-        $wlanDisconnectRecords = @($allRecords | Where-Object { $_.Source -eq 'WLAN' -and $disconnectIds -contains $_.EventId })
+        $discRecords = @($allRecords | Where-Object { $_.Source -eq 'WLAN' -and $disconnectIds -contains $_.EventId })
 
-        foreach ($rec in $wlanDisconnectRecords) {
+        foreach ($rec in $discRecords) {
             $tDisc = $rec.Timestamp
             $matched = $false
 
@@ -2213,6 +2215,7 @@ function Get-NetworkEventTimeline {
         TotalRecords               = @($sorted).Count
         Records                    = $sorted
         DisconnectCount            = $disconnectCounts
+        SecurityStoppedCount       = $securityStoppedCounts
         ReconnectFailureCount      = $reconnectFailureCounts
         KeyExchangeTimeoutCount    = $keyExchangeTimeoutCounts
         RssiAbnormalCount          = $rssiAbnormalCounts
@@ -2223,6 +2226,324 @@ function Get-NetworkEventTimeline {
         StandbyCorrelation         = $standbyCorrelation
         Warnings                   = @($warnings)
         Disclaimer                 = "以上仅为时间相关性，不构成因果结论。"
+    }
+}
+
+
+# ==============================================================================
+# WLAN 原因码原生 API 转换与辅助函数
+# 仅调用 WlanReasonCodeToString (纯查询)，严禁调用任何状态修改与句柄函数
+# ==============================================================================
+
+if (-not ([System.Management.Automation.PSTypeName]'NetworkRecovery.NativeWlanHelper').Type) {
+    $csharpSource = @'
+using System;
+using System.Text;
+using System.Runtime.InteropServices;
+
+namespace NetworkRecovery
+{
+    public static class NativeWlanHelper
+    {
+        [DllImport("wlanapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern uint WlanReasonCodeToString(
+            uint dwReasonCode,
+            uint dwBufferSize,
+            [In, Out] StringBuilder pStringBuffer,
+            IntPtr pReserved
+        );
+    }
+}
+'@
+    Add-Type -TypeDefinition $csharpSource -ErrorAction Stop
+}
+
+$script:WlanReasonCodeCache = @{}
+
+function Convert-WlanReasonCodeToText {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNull()]
+        $ReasonCode
+    )
+
+    $codeVal = 0
+    try {
+        $codeVal = [uint32]$ReasonCode
+    } catch {
+        return "无法翻译，原始码 $ReasonCode"
+    }
+
+    if ($null -eq $script:WlanReasonCodeCache) {
+        $script:WlanReasonCodeCache = @{}
+    }
+
+    if ($script:WlanReasonCodeCache.ContainsKey($codeVal)) {
+        return $script:WlanReasonCodeCache[$codeVal]
+    }
+
+    try {
+        $sb = New-Object System.Text.StringBuilder 1024
+        $ret = [NetworkRecovery.NativeWlanHelper]::WlanReasonCodeToString($codeVal, [uint32]$sb.Capacity, $sb, [IntPtr]::Zero)
+        if ($ret -eq 0) {
+            $text = $sb.ToString().Trim()
+            if ([string]::IsNullOrWhiteSpace($text)) {
+                $text = "无法翻译，原始码 $ReasonCode"
+            }
+            $script:WlanReasonCodeCache[$codeVal] = $text
+            return $text
+        } else {
+            $failText = "无法翻译，原始码 $ReasonCode"
+            $script:WlanReasonCodeCache[$codeVal] = $failText
+            return $failText
+        }
+    } catch {
+        return "无法翻译，原始码 $ReasonCode"
+    }
+}
+
+
+function Get-WlanDisconnectForensics {
+    [CmdletBinding()]
+    param(
+        [int]$HoursBack = 168,
+        [string]$LogDir = ""
+    )
+
+    $effectiveHours = if ($HoursBack -ge 0) { $HoursBack } else { 168 }
+    $now = Get-Date
+    $startTime = if ($effectiveHours -le 0) { $now.AddSeconds(1) } else { $now.AddHours(-$effectiveHours) }
+
+    $allWlanEvents = @()
+    $warnings = [System.Collections.Generic.List[string]]::new()
+    try {
+        if ($effectiveHours -gt 0) {
+            $allWlanEvents = @(Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-WLAN-AutoConfig/Operational'; StartTime=$startTime} -ErrorAction Stop | Sort-Object -Property TimeCreated)
+        }
+    } catch [System.Diagnostics.Eventing.Reader.EventLogNotFoundException] {
+        $warnings.Add("WLAN-AutoConfig/Operational 日志不存在或未启用")
+    } catch {
+        if ($_.Exception.Message -match "No events were found|未找到与指定条件匹配的事件") {
+            # 正常无事件
+        } else {
+            $warnings.Add("读取 WLAN 日志异常: $($_.Exception.Message)")
+        }
+    }
+
+    # 1. 驱动信息采集 (只记录不评价，作为后续比对基线)
+    $driverInfo = [PSCustomObject]@{
+        DriverVersion      = "N/A"
+        DriverDate         = "N/A"
+        DriverProviderName = "N/A"
+        InfName            = "N/A"
+        NetshDriverDetails = ""
+    }
+    try {
+        $adapter = Get-NetAdapter -InterfaceDescription "*Wi-Fi*", "*Wireless*" -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($adapter) {
+            if ($adapter.PSObject.Properties['DriverVersion'] -and $adapter.DriverVersion) { $driverInfo.DriverVersion = [string]$adapter.DriverVersion }
+            if ($adapter.PSObject.Properties['DriverDate'] -and $adapter.DriverDate) { $driverInfo.DriverDate = [string]$adapter.DriverDate }
+            if ($adapter.PSObject.Properties['DriverProvider'] -and $adapter.DriverProvider) { $driverInfo.DriverProviderName = [string]$adapter.DriverProvider }
+
+            if ($adapter.PSObject.Properties['PnPDeviceID'] -and $adapter.PnPDeviceID) {
+                try {
+                    $devId = $adapter.PnPDeviceID.Replace('\', '\\')
+                    $pnpDriver = Get-CimInstance Win32_PnPSignedDriver -Filter "DeviceID = '$devId'" -ErrorAction SilentlyContinue | Select-Object -First 1
+                    if ($pnpDriver) {
+                        if ($pnpDriver.PSObject.Properties['InfName'] -and $pnpDriver.InfName) { $driverInfo.InfName = [string]$pnpDriver.InfName }
+                        if ($pnpDriver.PSObject.Properties['DriverProviderName'] -and $pnpDriver.DriverProviderName) { $driverInfo.DriverProviderName = [string]$pnpDriver.DriverProviderName }
+                    }
+                } catch { }
+            }
+        }
+    } catch {
+        $warnings.Add("网卡驱动信息获取异常: $($_.Exception.Message)")
+    }
+
+    # 执行只读 netsh wlan show drivers
+    try {
+        $netshDrivers = (netsh wlan show drivers 2>&1) -join "`r`n"
+        $driverInfo.NetshDriverDetails = $netshDrivers
+    } catch {
+        $driverInfo.NetshDriverDetails = "netsh wlan show drivers 执行失败: $($_.Exception.Message)"
+    }
+
+    # 2. 事件分类与逐次分析
+    # 故障类: 8003 (断开), 8002 (连接失败), 11006 (安全失败)
+    # 正常流程类: 8000, 8001, 11000, 11001, 11004, 11005, 11010
+    $disconnectCount = 0      # 仅统计 8003
+    $normalTearDownCount = 0  # 11004: 正常安全会话拆除 (非故障)
+    $connectFailureCount = 0  # 8002
+    $securityFailureCount = 0 # 11006
+
+    $faultRecords = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $disconnectIntervals = [System.Collections.Generic.List[int]]::new()
+    $lastDisconnectTime = $null
+
+    $reasonCode8003Dist = @{}
+    $rssi8002Dist = @{}
+    $peerBssid11006Dist = @{}
+    $preceding8003Dist = @{}
+
+    foreach ($e in $allWlanEvents) {
+        $eid = $e.Id
+        if ($eid -eq 11004) {
+            $normalTearDownCount++
+            continue
+        }
+
+        if ($eid -notin @(8003, 8002, 11006)) {
+            continue
+        }
+
+        $props = @($e.Properties)
+        $reasonCodeRaw = $null
+        $reasonTextFromEvent = ""
+        $peerBssid = "N/A"
+        $rssi = "该字段在本机事件中不可用"
+        $ssidRaw = ""
+        $connectionId = $null
+
+        if ($eid -eq 8003) {
+            $disconnectCount++
+            $ssidRaw = if ($props.Count -gt 4) { [string]$props[4].Value } else { "" }
+            $reasonTextFromEvent = if ($props.Count -gt 6) { [string]$props[6].Value } else { "" }
+            $connectionId = if ($props.Count -gt 7) { $props[7].Value } else { $null }
+            $reasonCodeRaw = if ($props.Count -gt 8) { [uint32]$props[8].Value } else { 0 }
+
+            $codeKey = [string]$reasonCodeRaw
+            if (-not $reasonCode8003Dist.ContainsKey($codeKey)) { $reasonCode8003Dist[$codeKey] = 0 }
+            $reasonCode8003Dist[$codeKey]++
+
+            if ($null -ne $lastDisconnectTime) {
+                $diffSec = [int]([Math]::Round(($e.TimeCreated - $lastDisconnectTime).TotalSeconds))
+                if ($diffSec -ge 0) {
+                    $disconnectIntervals.Add($diffSec)
+                }
+            }
+            $lastDisconnectTime = $e.TimeCreated
+        } elseif ($eid -eq 8002) {
+            $connectFailureCount++
+            $ssidRaw = if ($props.Count -gt 4) { [string]$props[4].Value } else { "" }
+            $reasonTextFromEvent = if ($props.Count -gt 6) { [string]$props[6].Value } else { "" }
+            $reasonCodeRaw = if ($props.Count -gt 7) { [uint32]$props[7].Value } else { 0 }
+            $connectionId = if ($props.Count -gt 8) { $props[8].Value } else { $null }
+            $rssi = if ($props.Count -gt 9) { $props[9].Value } else { $null }
+
+            $rssiKey = if ($null -ne $rssi) { [string]$rssi } else { "Unknown" }
+            if (-not $rssi8002Dist.ContainsKey($rssiKey)) { $rssi8002Dist[$rssiKey] = 0 }
+            $rssi8002Dist[$rssiKey]++
+        } elseif ($eid -eq 11006) {
+            $securityFailureCount++
+            $ssidRaw = if ($props.Count -gt 3) { [string]$props[3].Value } else { "" }
+            $rawPeerMac = if ($props.Count -gt 5) { [string]$props[5].Value } else { "" }
+            if (-not [string]::IsNullOrWhiteSpace($rawPeerMac)) {
+                $parts = $rawPeerMac -split '[:-]'
+                $peerBssid = if (@($parts).Count -eq 6) { "$($parts[0]):$($parts[1]):$($parts[2]):**:**:**" } else { "**:**:**:**:**:**" }
+            }
+            $reasonTextFromEvent = if ($props.Count -gt 6) { [string]$props[6].Value } else { "" }
+            $reasonCodeRaw = if ($props.Count -gt 7) { [uint32]$props[7].Value } else { 0 }
+            $connectionId = if ($props.Count -gt 9) { $props[9].Value } else { $null }
+
+            $bssidKey = $peerBssid
+            if (-not $peerBssid11006Dist.ContainsKey($bssidKey)) { $peerBssid11006Dist[$bssidKey] = 0 }
+            $peerBssid11006Dist[$bssidKey]++
+        }
+
+        $reasonCodeHex = "0x{0:X8}" -f $reasonCodeRaw
+        $reasonTextFromApi = Convert-WlanReasonCodeToText -ReasonCode $reasonCodeRaw
+
+        # 脱敏 SSID
+        $maskedSsid = if (-not [string]::IsNullOrWhiteSpace($ssidRaw)) {
+            if ($ssidRaw.Length -le 2) { "**" } else { "$($ssidRaw[0])****$($ssidRaw[$ssidRaw.Length - 1])" }
+        } else { "[未关联 SSID]" }
+
+        # PrecedingEventId (该次事件前 60 秒内最近一条 WLAN 事件的 ID)
+        $curTime = $e.TimeCreated
+        $minTime = $curTime.AddSeconds(-60)
+        $preceding = $allWlanEvents | Where-Object { $_.TimeCreated -ge $minTime -and $_.TimeCreated -lt $curTime -and $_.RecordId -ne $e.RecordId } | Select-Object -Last 1
+        $precedingEventId = if ($preceding) { [string]$preceding.Id } else { "无" }
+
+        if ($eid -eq 8003) {
+            if (-not $preceding8003Dist.ContainsKey($precedingEventId)) { $preceding8003Dist[$precedingEventId] = 0 }
+            $preceding8003Dist[$precedingEventId]++
+        }
+
+        $faultRecords.Add([PSCustomObject]@{
+            TimeCreated         = $e.TimeCreated.ToString("yyyy-MM-dd HH:mm:ss")
+            EventId             = $eid
+            ReasonCodeRaw       = $reasonCodeRaw
+            ReasonCodeHex       = $reasonCodeHex
+            ReasonTextFromApi   = $reasonTextFromApi
+            ReasonTextFromEvent = $reasonTextFromEvent
+            PeerBssid           = $peerBssid
+            Rssi                = $rssi
+            Ssid                = $maskedSsid
+            ConnectionId        = $connectionId
+            PrecedingEventId    = $precedingEventId
+        })
+    }
+
+    # 3. 日志落地 (若指定 LogDir 或有效日志路径)
+    if ($LogDir -and (Test-Path $LogDir)) {
+        try {
+            $ts = (Get-Date).ToString("yyyyMMdd_HHmmss")
+            $forensicsLogPath = Join-Path $LogDir "wlan_disconnect_forensics_$ts.log"
+            $driverLogPath    = Join-Path $LogDir "wlan_drivers_$ts.log"
+
+            # 驱动详情落盘
+            [System.IO.File]::WriteAllText($driverLogPath, $driverInfo.NetshDriverDetails, [System.Text.Encoding]::UTF8)
+
+            # 取证时序明细落盘
+            $lines = [System.Collections.Generic.List[string]]::new()
+            $lines.Add("================================================================================")
+            $lines.Add("WLAN 逐次故障与断开取证分析明细报告 (最近 $effectiveHours 小时)")
+            $lines.Add("生成时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')")
+            $lines.Add("免责声明: 以上仅为时间相关性与统计分布，不构成因果结论。")
+            $lines.Add("================================================================================")
+            $lines.Add("【网卡驱动基线】")
+            $lines.Add("DriverVersion: $($driverInfo.DriverVersion) | DriverDate: $($driverInfo.DriverDate)")
+            $lines.Add("Provider: $($driverInfo.DriverProviderName) | INF: $($driverInfo.InfName)")
+            $lines.Add("-" * 80)
+            $lines.Add("【统计摘要】")
+            $lines.Add("Event 8003 (断开事件): $disconnectCount 次")
+            $lines.Add("Event 11004 (正常安全会话拆除): $normalTearDownCount 次 (标注：正常安全会话拆除，非故障)")
+            $lines.Add("Event 8002 (连接失败): $connectFailureCount 次")
+            $lines.Add("Event 11006 (安全握手超时): $securityFailureCount 次")
+            $lines.Add("-" * 80)
+            $fmt = "{0,-19} | {1,-5} | {2,-10} | {3,-10} | {4,-6} | {5,-8} | {6,-16} | {7,-8} | {8}" -f "时间", "ID", "码(Dec)", "码(Hex)", "RSSI", "前置ID", "PeerBSSID", "SSID", "API与事件文本"
+            $lines.Add($fmt)
+            $lines.Add("-" * 80)
+            foreach ($rec in $faultRecords) {
+                $rssiStr = if ($rec.Rssi -is [string]) { $rec.Rssi } else { [string]$rec.Rssi }
+                $textCombined = "$($rec.ReasonTextFromApi) [事件文本: $($rec.ReasonTextFromEvent)]"
+                $lines.Add(("{0,-19} | {1,-5} | {2,-10} | {3,-10} | {4,-6} | {5,-8} | {6,-16} | {7,-8} | {8}" -f `
+                    $rec.TimeCreated, $rec.EventId, $rec.ReasonCodeRaw, $rec.ReasonCodeHex, $rssiStr, $rec.PrecedingEventId, $rec.PeerBssid, $rec.Ssid, $textCombined))
+            }
+            [System.IO.File]::WriteAllLines($forensicsLogPath, $lines, [System.Text.Encoding]::UTF8)
+        } catch {
+            $warnings.Add("取证日志文件写入异常: $($_.Exception.Message)")
+        }
+    }
+
+    return [PSCustomObject]@{
+        HoursBack               = $effectiveHours
+        StartTime               = $startTime.ToString("yyyy-MM-dd HH:mm:ss")
+        TotalFaultRecords       = @($faultRecords).Count
+        FaultRecords            = @($faultRecords)
+        DisconnectCount         = $disconnectCount
+        NormalTearDownCount     = $normalTearDownCount
+        ConnectFailureCount     = $connectFailureCount
+        SecurityFailureCount    = $securityFailureCount
+        ReasonCode8003Dist      = $reasonCode8003Dist
+        Rssi8002Dist            = $rssi8002Dist
+        PeerBssid11006Dist      = $peerBssid11006Dist
+        Preceding8003Dist       = $preceding8003Dist
+        DisconnectIntervals     = @($disconnectIntervals)
+        DriverInfo              = $driverInfo
+        Warnings                = @($warnings)
+        Disclaimer              = "以上仅为时间相关性与统计分布，不构成因果结论。"
     }
 }
 
@@ -2244,5 +2565,7 @@ Export-ModuleMember -Function @(
     'Get-WlanDiagnostics',
     'Get-LocalWatchdogStatus',
     'Get-NetworkEventTimeline',
-    'Get-ModernStandbySessions'
+    'Get-ModernStandbySessions',
+    'Convert-WlanReasonCodeToText',
+    'Get-WlanDisconnectForensics'
 )

@@ -323,7 +323,10 @@ function Invoke-RunTimelineAnalysis {
     Write-Host "`n[时间线汇总统计]" -ForegroundColor Yellow
     Write-Host "   - 分析时间窗口: 最近 $($timeline.HoursBack) 小时 (起始时间: $($timeline.StartTime))"
     Write-Host "   - 捕获事件与动作总数: $($timeline.TotalRecords) 条"
-    Write-Host "   - WLAN 断开事件次数 (ID 8003/11004等): $($timeline.DisconnectCount) 次"
+    Write-Host "   - WLAN 断开事件次数 (ID 8003): $($timeline.DisconnectCount) 次 (真实断开)"
+    if ($timeline.PSObject.Properties['SecurityStoppedCount']) {
+        Write-Host "   - WLAN 正常安全会话拆除次数 (ID 11004): $($timeline.SecurityStoppedCount) 次 (标注：正常安全会话拆除，非故障)"
+    }
     Write-Host "   - WLAN 重连/连接失败次数 (ID 8002等): $($timeline.ReconnectFailureCount) 次"
     Write-Host "   - 动态密钥交换超时次数 (ID 11006等): $($timeline.KeyExchangeTimeoutCount) 次"
     Write-Host "   - RSSI 异常值 (如 255) 出现次数: $($timeline.RssiAbnormalCount) 次"
@@ -367,6 +370,79 @@ function Invoke-RunTimelineAnalysis {
             Write-Host "   - 事件 [$k]: $($timeline.OtherEventCounts[$k]) 次"
         }
     }
+
+    # --------------------------------------------------------------------------
+    # WLAN 逐次故障与断开取证分析子小节 (通过 WlanReasonCodeToString 官方 API 动态翻译)
+    # --------------------------------------------------------------------------
+    $forensics = Get-WlanDisconnectForensics -HoursBack $timeline.HoursBack -LogDir $logsDir
+    Write-Host "`n[WLAN 逐次故障与断开取证分析 (子小节)]" -ForegroundColor Yellow
+    Write-Host "   - 故障事件统计口径 (严格区分，拒绝混算):" -ForegroundColor Cyan
+    Write-Host "     * Event 8003 (断开事件): $($forensics.DisconnectCount) 次 (真实断开)" -ForegroundColor White
+    Write-Host "     * Event 11004 (正常安全会话拆除): $($forensics.NormalTearDownCount) 次 (标注：正常安全会话拆除，非故障)" -ForegroundColor Gray
+    Write-Host "     * Event 8002 (连接失败): $($forensics.ConnectFailureCount) 次" -ForegroundColor White
+    Write-Host "     * Event 11006 (安全握手超时): $($forensics.SecurityFailureCount) 次" -ForegroundColor White
+
+    # 网卡驱动基线信息 (只记录不评价)
+    if ($forensics.PSObject.Properties['DriverInfo'] -and $forensics.DriverInfo) {
+        $d = $forensics.DriverInfo
+        Write-Host "   - 活动网卡驱动基线信息 (只记录不评价):" -ForegroundColor Cyan
+        Write-Host "     * DriverVersion: $($d.DriverVersion) | DriverDate: $($d.DriverDate)" -ForegroundColor Gray
+        Write-Host "     * DriverProviderName: $($d.DriverProviderName) | InfName: $($d.InfName)" -ForegroundColor Gray
+    }
+
+    if ($forensics.TotalFaultRecords -eq 0) {
+        Write-Host "   该时间窗内无故障事件。" -ForegroundColor Green
+    } else {
+        # 汇总统计
+        # 1. 8003 ReasonCode 分布
+        $rc8003List = @()
+        foreach ($k in ($forensics.ReasonCode8003Dist.Keys | Sort-Object)) {
+            $apiText = Convert-WlanReasonCodeToText -ReasonCode $k
+            $rc8003List += "码 $k (0x{0:X8}, '$apiText'): $($forensics.ReasonCode8003Dist[$k]) 次" -f [uint32]$k
+        }
+        Write-Host "   - Event 8003 原因码分布: $($rc8003List -join '; ')"
+
+        # 2. 8002 RSSI 取值分布 (特别标出 255)
+        $rssiList = @()
+        foreach ($k in ($forensics.Rssi8002Dist.Keys | Sort-Object)) {
+            $tag = if ($k -eq "255") { "255 (无有效测量)" } else { "$k dBm" }
+            $rssiList += "$($tag): $($forensics.Rssi8002Dist[$k]) 次"
+        }
+        Write-Host "   - Event 8002 RSSI 取值分布: $($rssiList -join '; ')"
+
+        # 3. 11006 PeerBssid 分布
+        $bssidList = @()
+        foreach ($k in ($forensics.PeerBssid11006Dist.Keys | Sort-Object)) {
+            $bssidList += "$($k): $($forensics.PeerBssid11006Dist[$k]) 次"
+        }
+        Write-Host "   - Event 11006 对端 AP (PeerBSSID) 分布: $($bssidList -join '; ')"
+
+        # 4. 8003 前置事件 ID 分布
+        $precList = @()
+        foreach ($k in ($forensics.Preceding8003Dist.Keys | Sort-Object)) {
+            $precList += "前置事件 $($k): $($forensics.Preceding8003Dist[$k]) 次"
+        }
+        Write-Host "   - Event 8003 前置事件 ID (前60秒内) 分布: $($precList -join '; ')"
+
+        # 5. 8003 时间间隔分布
+        if (@($forensics.DisconnectIntervals).Count -gt 0) {
+            $minInt = ($forensics.DisconnectIntervals | Measure-Object -Minimum).Minimum
+            $maxInt = ($forensics.DisconnectIntervals | Measure-Object -Maximum).Maximum
+            $avgInt = [Math]::Round(($forensics.DisconnectIntervals | Measure-Object -Average).Average, 1)
+            Write-Host "   - Event 8003 断开时间间隔分布: 最小 ${minInt}s | 最大 ${maxInt}s | 平均 ${avgInt}s (无固定周期)"
+        } else {
+            Write-Host "   - Event 8003 断开时间间隔分布: 单次断开或无间隔样本"
+        }
+
+        # 控制台展示最近 10 次故障明细
+        Write-Host "`n   [最近故障取证时序明细 (展示最近 10 次，逐次明细已完整写入 logs\)]:" -ForegroundColor Yellow
+        $recent10 = @($forensics.FaultRecords | Select-Object -Last 10)
+        foreach ($f in $recent10) {
+            $rssiStr = if ($f.Rssi -is [string]) { $f.Rssi } else { "$($f.Rssi) dBm" }
+            Write-Host "     * $($f.TimeCreated) [ID: $($f.EventId)] 码: $($f.ReasonCodeRaw) ($($f.ReasonCodeHex)) | API含义: $($f.ReasonTextFromApi) | 事件文本: $($f.ReasonTextFromEvent) | 前置ID: $($f.PrecedingEventId) | BSSID: $($f.PeerBssid) | RSSI: $rssiStr | SSID: $($f.Ssid)" -ForegroundColor White
+        }
+    }
+    Write-Host "   - 免责说明: $($forensics.Disclaimer)" -ForegroundColor Cyan
 
     if (@($timeline.Warnings).Count -gt 0) {
         Write-Host "`n[执行提示与跳过说明]:" -ForegroundColor Gray

@@ -1,0 +1,42 @@
+﻿
+Interface name: WLAN
+
+    Driver                    : MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+    Vendor                    : MediaTek, Inc.
+    Provider                  : MediaTek, Inc.
+    Date                      : 2024/11/15
+    Version                   : 3.4.2.1123
+    INF file                  : oem67.inf
+    Type                      : Native Wi-Fi Driver
+    Radio types supported     : 802.11b 802.11a 802.11g 802.11n 802.11ac 802.11ax
+    FIPS 140 mode supported   : Yes
+    802.11w Management Frame Protection supported : Yes
+    Hosted network supported  : No
+    Authentication and cipher supported in infrastructure mode:
+                                Open             None
+                                Open             WEP-40bit
+                                Open             WEP-104bit
+                                Open             WEP
+                                WPA-Enterprise   TKIP
+                                WPA-Enterprise   CCMP
+                                WPA3-Personal    CCMP
+                                OWE              CCMP
+                                WPA-Personal     TKIP
+                                WPA-Personal     CCMP
+                                WPA2-Enterprise  TKIP
+                                WPA2-Enterprise  CCMP
+                                WPA2-Personal    TKIP
+                                WPA2-Personal    CCMP
+                                WPA3-Enterprise  CCMP
+                                WPA3-Enterprise  TKIP
+                                WPA3-Enterprise 192 Bits GCMP-256
+    Number of supported bands : 3
+                                2.4 GHz [ 0 MHz - 0 MHz]
+                                5 GHz [ 0 MHz - 0 MHz]
+                                6 GHz [ 0 MHz - 0 MHz]
+    IHV service present       : Yes
+    IHV adapter OUI           : [00 00 00], type: [00]
+    IHV extensibility DLL path: C:\WINDOWS\system32\mtkihvx.dll
+    IHV UI extensibility ClSID: {00000000-0000-0000-0000-000000000000}
+    IHV diagnostics CLSID     : {00000000-0000-0000-0000-000000000000}
+    Wireless Display Supported: Yes (Graphics Driver: Yes, Wi-Fi Driver: Yes)

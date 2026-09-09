@@ -1,0 +1,514 @@
+﻿================================================================================
+WLAN-AutoConfig/Operational 真实事件原始样本 (最近 168 小时)
+导出时间: 2026-09-10_06:19:42
+================================================================================
+
+################################################################################
+### 事件 ID: 8001 (共计 10 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:38:32 | 级别: Information ---
+【完整 Message 原文】:
+WLAN AutoConfig service has successfully connected to a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 702
+SSID: 702
+BSS Type: Infrastructure
+PHY Type: 802.11n
+Authentication: WPA2-Personal
+Encryption: AES-CCMP
+802.1x Enabled: No
+Hidden: false
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 702
+  [4] (String) = 702
+  [5] (String) = Infrastructure
+  [6] (String) = 802.11n
+  [7] (String) = WPA2-Personal
+  [8] (String) = AES-CCMP
+  [9] (UInt32) = 0
+  [10] (UInt64) = 7
+  [11] (Boolean) = False
+
+--- [样本 2] 时间: 09/10/2026 03:29:27 | 级别: Information ---
+【完整 Message 原文】:
+WLAN AutoConfig service has successfully connected to a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 701
+SSID: 701
+BSS Type: Infrastructure
+PHY Type: 802.11n
+Authentication: WPA2-Personal
+Encryption: AES-CCMP
+802.1x Enabled: No
+Hidden: false
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 701
+  [4] (String) = 701
+  [5] (String) = Infrastructure
+  [6] (String) = 802.11n
+  [7] (String) = WPA2-Personal
+  [8] (String) = AES-CCMP
+  [9] (UInt32) = 0
+  [10] (UInt64) = 6
+  [11] (Boolean) = False
+
+
+################################################################################
+### 事件 ID: 11005 (共计 13 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:38:32 | 级别: Information ---
+【完整 Message 原文】:
+Wireless security succeeded.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 702
+BSS Type: Infrastructure
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 702
+  [4] (String) = Infrastructure
+  [5] (UInt64) = 7
+
+--- [样本 2] 时间: 09/10/2026 03:29:27 | 级别: Information ---
+【完整 Message 原文】:
+Wireless security succeeded.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (UInt64) = 6
+
+
+################################################################################
+### 事件 ID: 11010 (共计 18 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:38:32 | 级别: Information ---
+【完整 Message 原文】:
+Wireless security started.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 702
+BSS Type: Infrastructure
+Authentication: WPA2-Personal
+Encryption: AES-GCMP-128
+FIPS Mode: Disabled
+802.1x Enabled: No
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 702
+  [4] (String) = Infrastructure
+  [5] (String) = WPA2-Personal
+  [6] (UInt32) = 7
+  [7] (String) = AES-GCMP-128
+  [8] (UInt32) = 8
+  [9] (UInt32) = 0
+  [10] (UInt32) = 0
+  [11] (UInt64) = 7
+
+--- [样本 2] 时间: 09/10/2026 03:29:27 | 级别: Information ---
+【完整 Message 原文】:
+Wireless security started.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Authentication: WPA2-Personal
+Encryption: AES-GCMP-128
+FIPS Mode: Disabled
+802.1x Enabled: No
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (String) = WPA2-Personal
+  [6] (UInt32) = 7
+  [7] (String) = AES-GCMP-128
+  [8] (UInt32) = 8
+  [9] (UInt32) = 0
+  [10] (UInt32) = 0
+  [11] (UInt64) = 6
+
+
+################################################################################
+### 事件 ID: 11001 (共计 12 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:38:32 | 级别: Information ---
+【完整 Message 原文】:
+Wireless network association succeeded.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 702
+BSS Type: Infrastructure
+Management Frame Protection Enabled: 0x700000000
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 702
+  [4] (String) = Infrastructure
+  [5] (UInt64) = 30064771072
+  [6] (Boolean) = False
+
+--- [样本 2] 时间: 09/10/2026 03:29:27 | 级别: Information ---
+【完整 Message 原文】:
+Wireless network association succeeded.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Management Frame Protection Enabled: 0x600000000
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (UInt64) = 25769803776
+  [6] (Boolean) = False
+
+
+################################################################################
+### 事件 ID: 11000 (共计 14 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:38:32 | 级别: Information ---
+【完整 Message 原文】:
+Wireless network association started.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 702
+BSS Type: Infrastructure
+Authentication: WPA2-Personal
+Encryption: AES-GCMP-128
+802.1X Enabled: No
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 702
+  [4] (String) = Infrastructure
+  [5] (String) = WPA2-Personal
+  [6] (String) = AES-GCMP-128
+  [7] (UInt32) = 0
+  [8] (String) = 
+  [9] (UInt64) = 7
+
+--- [样本 2] 时间: 09/10/2026 03:29:27 | 级别: Information ---
+【完整 Message 原文】:
+Wireless network association started.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Authentication: WPA2-Personal
+Encryption: AES-GCMP-128
+802.1X Enabled: No
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (String) = WPA2-Personal
+  [6] (String) = AES-GCMP-128
+  [7] (UInt32) = 0
+  [8] (String) = 
+  [9] (UInt64) = 6
+
+
+################################################################################
+### 事件 ID: 8000 (共计 14 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:38:32 | 级别: Information ---
+【完整 Message 原文】:
+WLAN AutoConfig service started a connection to a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 702
+SSID: 702
+BSS Type: Infrastructure
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 702
+  [4] (String) = 702
+  [5] (String) = Infrastructure
+  [6] (UInt64) = 7
+
+--- [样本 2] 时间: 09/10/2026 03:29:27 | 级别: Information ---
+【完整 Message 原文】:
+WLAN AutoConfig service started a connection to a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 701
+SSID: 701
+BSS Type: Infrastructure
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 701
+  [4] (String) = 701
+  [5] (String) = Infrastructure
+  [6] (UInt64) = 6
+
+
+################################################################################
+### 事件 ID: 8003 (共计 8 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:37:47 | 级别: Information ---
+【完整 Message 原文】:
+WLAN AutoConfig service has successfully disconnected from a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 701
+SSID: 701
+BSS Type: Infrastructure
+Reason: 网络被驱动程序断开连接。
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 701
+  [4] (String) = 701
+  [5] (String) = Infrastructure
+  [6] (String) = 网络被驱动程序断开连接。
+  [7] (UInt64) = 6
+  [8] (UInt32) = 0
+
+--- [样本 2] 时间: 09/10/2026 03:11:52 | 级别: Information ---
+【完整 Message 原文】:
+WLAN AutoConfig service has successfully disconnected from a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 701
+SSID: 701
+BSS Type: Infrastructure
+Reason: 网络被驱动程序断开连接。
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 701
+  [4] (String) = 701
+  [5] (String) = Infrastructure
+  [6] (String) = 网络被驱动程序断开连接。
+  [7] (UInt64) = 5
+  [8] (UInt32) = 0
+
+
+################################################################################
+### 事件 ID: 11004 (共计 17 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 03:37:42 | 级别: Information ---
+【完整 Message 原文】:
+Wireless security stopped.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Security Hint: 操作成功。
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (String) = 操作成功。
+  [6] (UInt32) = 0
+  [7] (UInt64) = 6
+
+--- [样本 2] 时间: 09/10/2026 03:11:45 | 级别: Information ---
+【完整 Message 原文】:
+Wireless security stopped.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Security Hint: 操作成功。
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (String) = 操作成功。
+  [6] (UInt32) = 0
+  [7] (UInt64) = 5
+
+
+################################################################################
+### 事件 ID: 8002 (共计 4 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 01:28:55 | 级别: Error ---
+【完整 Message 原文】:
+WLAN AutoConfig service failed to connect to a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 701
+SSID: 701
+BSS Type: Infrastructure
+Failure Reason:特定的网络不可用。
+RSSI: -60
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 701
+  [4] (String) = 701
+  [5] (String) = Infrastructure
+  [6] (String) = 特定的网络不可用。
+  [7] (UInt32) = 163851
+  [8] (UInt64) = 4
+  [9] (Int32) = -60
+
+--- [样本 2] 时间: 09/10/2026 01:27:32 | 级别: Error ---
+【完整 Message 原文】:
+WLAN AutoConfig service failed to connect to a wireless network.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Connection Mode: 使用配置文件手动连接
+Profile Name: 701
+SSID: 701
+BSS Type: Infrastructure
+Failure Reason:特定的网络不可用。
+RSSI: 255
+
+【Properties 属性结构化枚举】:
+  [0] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [1] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [2] (String) = 使用配置文件手动连接
+  [3] (String) = 701
+  [4] (String) = 701
+  [5] (String) = Infrastructure
+  [6] (String) = 特定的网络不可用。
+  [7] (UInt32) = 163851
+  [8] (UInt64) = 3
+  [9] (Int32) = 255
+
+
+################################################################################
+### 事件 ID: 11006 (共计 4 条记录)
+################################################################################
+--- [样本 1] 时间: 09/10/2026 01:28:54 | 级别: Error ---
+【完整 Message 原文】:
+Wireless security failed.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Peer MAC Address: 00:4B:F3:25:A8:92
+Reason: 动态密钥交换未能在配置的时间范围内成功
+Error: 0x0
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (String) = 00:4B:F3:25:A8:92
+  [6] (String) = 动态密钥交换未能在配置的时间范围内成功
+  [7] (Int32) = 294917
+  [8] (Int32) = 0
+  [9] (UInt64) = 4
+
+--- [样本 2] 时间: 09/09/2026 13:52:47 | 级别: Error ---
+【完整 Message 原文】:
+Wireless security failed.
+
+Network Adapter: MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+Interface GUID: {4d0f3a41-0043-4f78-bed7-e5f84547850a}
+Local MAC Address: A8:E2:91:14:0F:D0
+Network SSID: 701
+BSS Type: Infrastructure
+Peer MAC Address: 00:4B:F3:25:A8:92
+Reason: 动态密钥交换未能在配置的时间范围内成功
+Error: 0x0
+
+【Properties 属性结构化枚举】:
+  [0] (String) = MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+  [1] (Guid) = 4d0f3a41-0043-4f78-bed7-e5f84547850a
+  [2] (String) = A8:E2:91:14:0F:D0
+  [3] (String) = 701
+  [4] (String) = Infrastructure
+  [5] (String) = 00:4B:F3:25:A8:92
+  [6] (String) = 动态密钥交换未能在配置的时间范围内成功
+  [7] (Int32) = 294917
+  [8] (Int32) = 0
+  [9] (UInt64) = 1
+

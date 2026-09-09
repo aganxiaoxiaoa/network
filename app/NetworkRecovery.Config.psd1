@@ -45,10 +45,13 @@
         "Service Control Manager"
     )
 
-    # 关键网络事件 ID 分类映射
+    # 关键网络事件 ID 分类映射 (严格区分故障与正常拆除)
     TimelineEventClassifications = @{
-        # WLAN 断开事件 ID
-        DisconnectEventIds = @(8003, 11004)
+        # WLAN 断开事件 ID (仅限真实物理/驱动断开，口径已严格校准)
+        DisconnectEventIds = @(8003)
+
+        # WLAN 正常安全会话拆除事件 ID (属于正常会话结束流程，非故障事件)
+        SecurityStoppedEventIds = @(11004)
 
         # WLAN 连接/重连失败事件 ID
         ConnectionFailureEventIds = @(8002)
@@ -56,7 +59,7 @@
         # 动态密钥交换超时事件 ID
         KeyExchangeTimeoutEventIds = @(11006)
 
-        # 关联与安全协商事件 ID
+        # 关联与安全协商事件 ID (正常流程类)
         AssociationEventIds = @(8000, 8001, 11000, 11001, 11005, 11010)
 
         # DNS 解析超时/失败事件 ID
@@ -67,6 +70,17 @@
 
         # 异常 RSSI 判定数值 (例如 255 表示网络不可用/探测异常)
         AbnormalRssiValues = @(255)
+    }
+
+    # --------------------------------------------------------------------------
+    # WLAN 原因码分组归类映射配置
+    # 码 -> 归类名。含义文本一律通过 WlanReasonCodeToString API 动态解析，严禁写死文本
+    # 分组依据严格基于官方 API 返回文本与事件上下文
+    # --------------------------------------------------------------------------
+    WlanReasonCodeGroups = @{
+        0      = "成功"
+        163851 = "网络不可用"
+        294917 = "安全握手超时"
     }
 
     # --------------------------------------------------------------------------

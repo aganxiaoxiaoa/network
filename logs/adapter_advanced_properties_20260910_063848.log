@@ -1,0 +1,24 @@
+﻿================================================================================
+网卡高级属性全量枚举日志 (适配器: WLAN)
+采集时间: 2026-09-10 06:38:48
+总属性数: 17 | 相关匹配项: 9 | 需关注开启: 0 | 正常类开启: 4 | 枚举项: 3
+================================================================================
+DisplayName                         | DisplayValue       | RegistryKeyword           | 分类标记
+-----------------------------------------------------------------------------------------------
+AMSDU Rx                            | 已启用                | AMSDURx                   | [常规属性]
+AMSDU Tx                            | 已启用                | AMSDUTx                   | [常规属性]
+Band Selection                      | 1. All Band        | BandSelection             | [常规属性]
+2.4GHz channel bandwidth            | 1. Auto            | BWSelection24G            | [常规属性]
+5GHz channel bandwidth              | 1. Auto            | BWSelection5G             | [常规属性]
+6GHz channel bandwidth              | 1. Auto            | BWSelection6G             | [常规属性]
+802.11ax/ac/n/abg                   | 1. 802.11ax        | CurrPhyMode               | [常规属性]
+ARP Offload for WOWLAN              | 已启用                | DisableARPOffload         | [正常类-已开启]
+GTK Rekey for WOWLAN                | 已启用                | DisableGTKRekey           | [正常类-已开启]
+唤醒幻数据包                              | 已启用                | DisableWakeOnMagic        | [正常类-已开启]
+唤醒模式匹配                              | 已启用                | DisableWakeOnPattern      | [正常类-已开启]
+省电                                  | 已禁用                | LowPowerEnable            | [需关注-已关闭]
+首选频带                                | 1. 无首选项            | PreferredBand             | [枚举项]
+漫游主动性                               | 3. 中低              | RoamIndicateTh            | [枚举项]
+Transmit Power Level                | 1. 最高              | TxPowerLevel              | [枚举项]
+U-APSD Support                      | 已禁用                | UAPSDSupport              | [需关注-已关闭]
+Miracast prefer band                | Auto               | WfdGOOperatingChannel     | [常规属性]
