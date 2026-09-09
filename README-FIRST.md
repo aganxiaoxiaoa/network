@@ -1,4 +1,4 @@
-﻿# README-FIRST: 便携网络诊断工具箱安全使用须知 (只读安全版)
+# README-FIRST: 便携网络诊断工具箱安全使用须知 (只读安全版)
 
 ================================================================================
 【重要安全声明】当前版本为纯只读网络诊断工具，绝不修改系统网络！
@@ -51,19 +51,24 @@ Network-Recovery-USB\
 
 ---
 
-### 三、使用方法
+### 三、使用方法与交互菜单详解
 
 1. **双击启动**：
-   直接双击 `START-DIAGNOSIS.cmd` 即可启动终端只读菜单。
-2. **菜单功能**：
-   - `[1] 执行完整只读网络健康诊断`：分层探测路由、网关响应、4公网TCP直连握手、DNS解析、WinINET/WinHTTP代理状态。
-   - `[2] 生成诊断报告与脱敏压缩包`：在 `output\` 生成脱敏 ZIP 包，供排查使用。
-   - `[3] 导出第三方网络硬件驱动`：仅使用 PnPUtil 将第三方网卡驱动导出至 `backups\` 目录，绝不修改、不删除现有驱动。
-   - `[0] 退出`。
+   直接双击 `START-DIAGNOSIS.cmd` 即可启动终端只读菜单（默认以普通权限运行）。
+2. **交互式主菜单选项与代码实际定义 (app/NetworkDiagnostics.ps1)**：
+   - `[1] Execute Read-Only Network Diagnostics` (执行纯只读网络健康诊断)：
+     调用 `Invoke-FullHealthDiagnosis`，分层执行 9 项纯只读探测（默认路由、网关响应、4公网TCP直连握手、DNS解析、WinINET/WinHTTP代理状态、核心网络服务），控制台实时滚动显示探测结果。
+   - `[2] Generate Diagnostic Log Bundle (ZIP)` (生成诊断日志压缩包)：
+     交互提示 `Include WLAN profiles? (Y/N, default N)`（默认 N，即不包含明文 SSID 与 Wi-Fi 配置文件），调用 `New-DiagnosticBundle -IncludeWlanProfiles:$include` 在 `output\` 生成脱敏 `NetworkDiagnosticBundle-*.zip`。
+   - `[3] Export Third-Party Network Driver Catalog` (导出第三方网络驱动清单与包)：
+     调用 `Export-DriverCatalog`。若当前为普通用户权限，检测到未提权后打印 `Driver catalog export requires Administrator privileges.` 及 `Relaunching with elevation...`，通过 UAC 弹窗提权启动新进程只读导出至 `backups\` 目录；若已具备管理员权限则直接运行 `pnputil /export-driver` 备份。
+   - `[0] Exit` (退出)：
+     打印 `Exiting.`，跳出主循环并释放单实例互斥锁退出。
 
 ---
 
 ### 四、严禁运行隔离区 (quarantine)
 
 `quarantine\` 目录中封存了曾与断网事故同时发生的旧版本文件。
-其入口文件已更名为 `.disabled`。**严禁恢复扩展名、严禁尝试运行隔离区中的任何文件！**
+其入口文件已更名为 `.disabled`。**严禁恢复扩展名、严禁尝试运行隔离区中的任何文件！**
+
