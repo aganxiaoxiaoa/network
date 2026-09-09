@@ -461,4 +461,4 @@ Export-ModuleMember -Function @(
     'Invoke-DeepReset',
     'Invoke-ResetProxyToDirect',
     'Restore-ProxyFromSnapshot'
-)
+)

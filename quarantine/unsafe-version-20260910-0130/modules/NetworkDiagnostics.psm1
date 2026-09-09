@@ -549,4 +549,4 @@ Export-ModuleMember -Function @(
     'Get-NetworkServiceStatus',
     'Get-WlanDiagnostics',
     'Invoke-FullDiagnostic'
-)
+)
