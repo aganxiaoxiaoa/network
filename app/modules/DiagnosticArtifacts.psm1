@@ -91,8 +91,8 @@ function Export-NetworkDrivers {
     }
 
     Write-Host "`n[完成] 驱动备份完成！所有文件均保存在 U 盘 backups\network-drivers-$ts 目录下。" -ForegroundColor Green
-    Write-Host "驱动恢复说明：在目标电脑管理员命令行中执行：" -ForegroundColor Gray
-    Write-Host "  pnputil /add-driver `"<U盘路径>\backups\network-drivers-$ts\*.inf`" /subdirs /install" -ForegroundColor Gray
+    Write-Host "驱动恢复说明：在目标电脑管理员命令行中执行 Windows 驱动安装命令：" -ForegroundColor Gray
+    Write-Host "  pnputil (使用 add-driver 参数导入) `"<U盘路径>\backups\network-drivers-$ts\*.inf`" /subdirs /install" -ForegroundColor Gray
     return $true
 }
 

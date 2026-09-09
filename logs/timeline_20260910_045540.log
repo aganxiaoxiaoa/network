@@ -1,0 +1,743 @@
+﻿================================================================================
+Windows 10/11 便携网络诊断工具箱 - 断网时间线关联分析报告
+生成时间: 2026-09-10 04:55:40 | 分析窗口: 最近 24 小时
+免责声明: 以上仅为时间相关性，不构成因果结论。
+================================================================================
+时间戳                 | 来源       | 事件ID   | 级别          | 事件摘要
+--------------------------------------------------------------------------------
+2026-09-09 04:57:29 | Watchdog | -      | DIAG        | 1 proxy group(s) need a node switch: 故障转移. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 04:57:34 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (206ms)
+2026-09-09 09:18:20 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 09:18:20 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 09:18:25 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (170ms)
+2026-09-09 09:18:26 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (223ms)
+2026-09-09 09:18:27 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (173ms)
+2026-09-09 09:18:32 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (171ms)
+2026-09-09 09:34:01 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 09:39:18 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 09:39:18 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 09:39:23 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (163ms)
+2026-09-09 09:39:25 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (208ms)
+2026-09-09 09:39:26 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (165ms)
+2026-09-09 09:39:31 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (171ms)
+2026-09-09 09:42:31 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 09:42:31 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 09:42:36 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (204ms)
+2026-09-09 09:42:37 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (210ms)
+2026-09-09 09:42:38 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (176ms)
+2026-09-09 09:42:43 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (210ms)
+2026-09-09 09:44:55 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 09:51:40 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 09:51:40 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 09:51:45 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (205ms)
+2026-09-09 09:51:51 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🇪🇺欧洲自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 09:51:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (204ms)
+2026-09-09 09:51:58 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (171ms)
+2026-09-09 11:17:22 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 11:33:14 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:33:14 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:33:19 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (81ms)
+2026-09-09 11:33:24 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (91ms)
+2026-09-09 11:33:42 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:33:42 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:33:48 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (64ms)
+2026-09-09 11:33:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (58ms)
+2026-09-09 11:36:33 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:36:33 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:36:38 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (81ms)
+2026-09-09 11:36:43 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (58ms)
+2026-09-09 11:38:20 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:38:20 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:38:25 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (84ms)
+2026-09-09 11:38:30 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (70ms)
+2026-09-09 11:39:21 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:39:21 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:39:26 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (57ms)
+2026-09-09 11:39:31 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (84ms)
+2026-09-09 11:41:25 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:41:25 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:41:30 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (81ms)
+2026-09-09 11:41:35 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (146ms)
+2026-09-09 11:44:03 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:44:03 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:44:08 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (76ms)
+2026-09-09 11:44:13 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (65ms)
+2026-09-09 11:47:12 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:47:12 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:47:17 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (60ms)
+2026-09-09 11:47:22 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (83ms)
+2026-09-09 11:56:40 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:56:40 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:56:45 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (79ms)
+2026-09-09 11:56:50 | Watchdog | -      | ERROR       | Repair-MihomoGroup('自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 11:58:11 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:58:11 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:58:16 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (83ms)
+2026-09-09 11:58:21 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (58ms)
+2026-09-09 11:58:41 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:58:41 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:58:46 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (63ms)
+2026-09-09 11:58:51 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (80ms)
+2026-09-09 11:59:12 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:59:12 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 11:59:17 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (76ms)
+2026-09-09 11:59:22 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (106ms)
+2026-09-09 11:59:57 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 11:59:57 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:00:02 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (50ms)
+2026-09-09 12:00:07 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (61ms)
+2026-09-09 12:00:28 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:00:28 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:00:33 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (67ms)
+2026-09-09 12:00:38 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (110ms)
+2026-09-09 12:00:58 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:00:58 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:01:03 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (76ms)
+2026-09-09 12:01:08 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (62ms)
+2026-09-09 12:02:14 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:02:15 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:02:20 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (56ms)
+2026-09-09 12:02:25 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (72ms)
+2026-09-09 12:02:43 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:02:43 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:02:48 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (51ms)
+2026-09-09 12:02:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (78ms)
+2026-09-09 12:04:50 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:04:50 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:04:55 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (58ms)
+2026-09-09 12:05:00 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (67ms)
+2026-09-09 12:05:20 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:05:20 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:05:25 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (59ms)
+2026-09-09 12:05:30 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (49ms)
+2026-09-09 12:05:50 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:05:50 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:05:56 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (45ms)
+2026-09-09 12:06:01 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (91ms)
+2026-09-09 12:06:56 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:06:56 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:07:01 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (61ms)
+2026-09-09 12:07:06 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (55ms)
+2026-09-09 12:07:26 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:07:26 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:07:31 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (53ms)
+2026-09-09 12:07:36 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (60ms)
+2026-09-09 12:08:12 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:08:12 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:08:17 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (50ms)
+2026-09-09 12:08:22 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (57ms)
+2026-09-09 12:08:43 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:08:43 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:08:48 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (78ms)
+2026-09-09 12:08:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (48ms)
+2026-09-09 12:09:29 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:09:29 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:09:34 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (76ms)
+2026-09-09 12:09:39 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (80ms)
+2026-09-09 12:11:16 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:11:16 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:11:21 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (73ms)
+2026-09-09 12:11:26 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (81ms)
+2026-09-09 12:29:29 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:29:29 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:29:34 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (76ms)
+2026-09-09 12:29:39 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (61ms)
+2026-09-09 12:32:17 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:32:17 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:32:22 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 12:32:27 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (90ms)
+2026-09-09 12:53:38 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 12:53:38 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 12:53:43 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (180ms)
+2026-09-09 12:53:44 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (242ms)
+2026-09-09 12:53:45 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (170ms)
+2026-09-09 12:53:50 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (170ms)
+2026-09-09 13:52:39 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-09 13:52:42 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=True gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 13:52:42 | Watchdog | -      | DIAG        | All 4 WAN targets unreachable: 223.5.5.5:53, 119.29.29.29:53, 114.114.114.114:53, www.baidu.com:443
+2026-09-09 13:52:42 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 13:52:47 | WLAN     | 11006  | Error       | 动态密钥交换在配置的时间范围内未能成功
+2026-09-09 13:52:47 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-09 13:52:47 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-09 13:52:57 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 13:53:12 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 13:53:27 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 13:53:42 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 13:53:57 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 13:53:57 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 13:53:57 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 13:53:58 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 13:54:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 13:54:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 13:54:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 13:54:58 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 13:55:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 13:55:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 13:55:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 13:55:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 13:56:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 13:56:29 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 13:56:44 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 13:56:59 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 13:56:59 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 13:56:59 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 13:56:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 13:57:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 13:57:29 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 13:57:44 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 13:58:00 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 13:58:15 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 13:58:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 13:58:45 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 13:59:00 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 13:59:15 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 13:59:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 13:59:45 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:00:01 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:00:01 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:00:01 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:00:01 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:00:16 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:00:31 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:00:46 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:01:01 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:01:16 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:01:31 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:01:47 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:02:02 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:02:17 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:02:32 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:02:47 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:03:02 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:03:02 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:03:02 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:03:02 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:03:17 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:03:32 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:03:48 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:04:03 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:04:18 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:04:33 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:04:48 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:05:03 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:05:18 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:05:33 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:05:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:06:04 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:06:04 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:06:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:06:04 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:06:19 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:06:34 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:06:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:07:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:07:19 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:07:34 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:07:50 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:08:05 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:08:20 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:08:35 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:08:50 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:09:05 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:09:05 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:09:05 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:09:05 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:09:20 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:09:36 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:09:51 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:10:06 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:10:21 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:10:36 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:10:51 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:11:06 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:11:21 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:11:37 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:11:52 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:12:07 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:12:07 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:12:07 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:12:07 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:12:22 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:12:37 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:12:52 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:13:07 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:13:22 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:13:38 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:13:53 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:14:08 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:14:23 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:14:38 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:14:53 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:15:08 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:15:08 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:15:08 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:15:08 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:15:23 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:15:39 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:15:54 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:16:09 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:16:24 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:16:39 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:16:54 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:17:09 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:17:24 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:17:40 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:17:55 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:18:10 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:18:10 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:18:10 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:18:10 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:18:25 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:18:40 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:18:55 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:19:10 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:19:26 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:19:41 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:19:56 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:20:11 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:20:26 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:20:41 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:20:56 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:21:11 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:21:11 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:21:11 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:21:11 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:21:27 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:21:42 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:21:57 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:22:12 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:22:27 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:22:42 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:22:57 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:23:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:23:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:23:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:23:58 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:24:13 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:24:13 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:24:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:24:13 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:24:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:24:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:24:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:25:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:25:29 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:25:44 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:25:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:26:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:26:29 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:26:44 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:27:00 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:27:15 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:27:15 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:27:15 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:27:15 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:27:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:27:45 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:28:00 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:28:15 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:28:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:28:45 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:29:01 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:29:16 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:29:31 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:29:46 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:30:01 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:30:16 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 14:30:16 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:30:16 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 14:30:16 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:30:31 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:30:47 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:31:02 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:31:17 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:31:32 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:31:47 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 14:32:02 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 14:32:17 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 14:32:32 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 14:32:48 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 14:33:03 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 14:33:14 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-09 14:33:14 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-09 14:33:15 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-09 14:33:15 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 14:33:15 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-09 14:33:15 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-09 14:33:18 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 14:33:24 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (223ms)
+2026-09-09 14:33:29 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (212ms)
+2026-09-09 14:33:32 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (235ms)
+2026-09-09 14:33:37 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (170ms)
+2026-09-09 14:57:14 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 14:57:14 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-09 15:16:51 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 15:16:51 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 15:16:56 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (204ms)
+2026-09-09 15:16:57 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (209ms)
+2026-09-09 15:17:03 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (177ms)
+2026-09-09 15:17:09 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (164ms)
+2026-09-09 16:41:13 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-09 16:41:18 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=True gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:41:18 | Watchdog | -      | DIAG        | All 4 WAN targets unreachable: 223.5.5.5:53, 119.29.29.29:53, 114.114.114.114:53, www.baidu.com:443
+2026-09-09 16:41:18 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-09 16:41:33 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:41:48 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:42:03 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:42:18 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:42:33 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 16:42:33 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 16:42:33 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 16:42:33 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:42:48 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:43:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:43:19 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:43:34 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:43:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:44:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:44:19 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:44:34 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:44:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:45:05 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:45:20 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:45:35 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 16:45:35 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 16:45:35 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:45:35 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 16:45:50 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:46:05 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:46:20 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:46:35 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:46:50 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:47:06 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:47:21 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:47:36 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:47:51 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:48:06 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:48:21 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:48:36 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 16:48:36 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 16:48:36 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:48:36 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 16:48:51 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:49:07 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:49:22 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:49:37 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:49:52 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:50:07 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:50:22 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:50:37 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:50:53 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:51:08 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:51:23 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:51:38 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 16:51:38 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-09 16:51:38 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:51:38 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-09 16:51:53 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:52:08 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-09 16:52:23 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-09 16:52:38 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-09 16:52:54 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-09 16:53:09 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-09 16:53:24 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 16:53:35 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-09 16:53:35 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-09 16:53:35 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-09 16:53:35 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 16:53:35 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-09 16:53:35 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-09 16:53:40 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 16:53:48 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 操作超时。
+2026-09-09 16:53:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (191ms)
+2026-09-09 16:53:55 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (259ms)
+2026-09-09 16:54:00 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (192ms)
+2026-09-09 19:18:29 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 19:18:29 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 19:18:36 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (5000ms)
+2026-09-09 19:18:40 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (204ms)
+2026-09-09 19:18:43 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (237ms)
+2026-09-09 19:18:48 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (173ms)
+2026-09-09 19:56:24 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 19:56:24 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-09 19:58:35 | Watchdog | -      | DIAG        | 1 proxy group(s) need a node switch: 🇺🇸美国自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 19:58:37 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (169ms)
+2026-09-09 21:26:12 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 21:26:12 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 21:26:17 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (189ms)
+2026-09-09 21:26:22 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🇪🇺欧洲自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 21:26:28 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (1493ms)
+2026-09-09 21:26:33 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (249ms)
+2026-09-09 21:28:20 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 21:28:20 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 21:28:28 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 操作超时。
+2026-09-09 21:28:33 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🇪🇺欧洲自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 21:28:38 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🇺🇸美国自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 21:28:43 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🌍自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 21:29:49 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 21:29:54 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (173ms)
+2026-09-09 21:29:58 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (196ms)
+2026-09-09 21:30:03 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (244ms)
+2026-09-09 21:30:08 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (216ms)
+2026-09-09 22:52:09 | System   | 8000   | Information | MT7922 无线驱动底层事件 (ID: 8000)
+2026-09-09 22:52:17 | System   | 50036  | Information | [Microsoft-Windows-Dhcp-Client] DHCPv4 client service is started
+2026-09-09 22:52:17 | System   | 50103  | Information | [Microsoft-Windows-Dhcp-Client] DHCPv4 client registered for shutdown notification
+2026-09-09 22:52:17 | System   | 50036  | Information | [Microsoft-Windows-Dhcp-Client] DHCPv4 client service is started
+2026-09-09 22:52:17 | System   | 51046  | Information | [Microsoft-Windows-DHCPv6-Client] DHCPv6 client service is started
+2026-09-09 22:52:20 | System   | 4000   | Information | [Microsoft-Windows-WLAN-AutoConfig] WLAN AutoConfig service has successfully started.
+2026-09-09 22:52:20 | System   | 10001  | Information | [Microsoft-Windows-WLAN-AutoConfig] WLAN Extensibility Module has successfully started.
+2026-09-09 22:52:50 | System   | 4207   | Error       | TCP/IP 接口绑定提供程序失败 (ID 4207)
+2026-09-09 22:52:50 | System   | 4207   | Error       | TCP/IP 接口绑定提供程序失败 (ID 4207)
+2026-09-09 22:53:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-09 22:53:10 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-09 22:53:10 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-09 22:53:10 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-09 22:53:10 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 22:53:10 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-09 22:53:11 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-09 22:55:23 | System   | 7045   | Information | 系统安装了新服务/驱动: KUsbGuard
+2026-09-09 22:59:31 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-09 22:59:31 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 22:59:31 | System   | 1014   | Warning     | DNS 解析超时告警: www.microsoft.com
+2026-09-09 22:59:33 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 22:59:33 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 22:59:38 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 22:59:43 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🇪🇺欧洲自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 22:59:48 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (225ms)
+2026-09-09 22:59:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (224ms)
+2026-09-09 23:00:07 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:01:46 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 23:04:45 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:04:58 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 23:07:49 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-09 23:07:49 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 23:18:17 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:18:26 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 23:21:33 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-09 23:21:33 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 23:21:39 | Watchdog | -      | DIAG        | 4 proxy group(s) need a node switch: 故障转移, 🇪🇺欧洲自动选择, 🇺🇸美国自动选择, 🌍自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 23:21:39 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 23:21:45 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (174ms)
+2026-09-09 23:21:50 | Watchdog | -      | ERROR       | Repair-MihomoGroup('🇪🇺欧洲自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-09 23:21:52 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (178ms)
+2026-09-09 23:21:57 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (176ms)
+2026-09-09 23:31:15 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-09 23:31:15 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-09 23:31:52 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:46:17 | System   | 7045   | Information | 系统安装了新服务/驱动: WinDivert
+2026-09-09 23:54:36 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-09 23:54:36 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-09 23:54:41 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (55ms)
+2026-09-09 23:54:46 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (92ms)
+2026-09-10 00:16:51 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 00:16:51 | Watchdog | -      | WARN        | WAN reachable but DNS resolution failing. Flushing DNS.
+2026-09-10 00:20:47 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 00:20:47 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 00:20:52 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-10 00:20:57 | Watchdog | -      | ERROR       | Repair-MihomoGroup('自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-10 00:21:21 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 00:21:21 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 00:21:26 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-10 00:21:31 | Watchdog | -      | ERROR       | Repair-MihomoGroup('自动选择') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-10 00:21:50 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 自动选择, 故障转移. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 00:21:50 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 00:21:55 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (102ms)
+2026-09-10 00:22:00 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (107ms)
+2026-09-10 00:35:47 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 00:35:47 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 00:35:52 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (80ms)
+2026-09-10 00:35:57 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (93ms)
+2026-09-10 00:36:49 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 00:36:49 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 00:36:54 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (72ms)
+2026-09-10 00:36:59 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (120ms)
+2026-09-10 00:55:17 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 00:55:17 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 00:55:22 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (50ms)
+2026-09-10 00:55:27 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (68ms)
+2026-09-10 01:16:24 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 01:16:24 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 01:16:29 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (146ms)
+2026-09-10 01:16:34 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (113ms)
+2026-09-10 01:26:51 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 01:26:56 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-10 01:26:58 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=True gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 01:26:58 | Watchdog | -      | DIAG        | All 4 WAN targets unreachable: 223.5.5.5:53, 119.29.29.29:53, 114.114.114.114:53, www.baidu.com:443
+2026-09-10 01:27:02 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:27:02 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:27:04 | WLAN     | 8002   | Error       | 无线连接失败 [原因: 特定的网络不可用。, RSSI: 255]
+2026-09-10 01:27:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 01:27:26 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:27:26 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:27:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 01:27:32 | WLAN     | 8002   | Error       | 无线连接失败 [原因: 特定的网络不可用。, RSSI: 255]
+2026-09-10 01:27:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 01:27:58 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 01:28:13 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 01:28:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 01:28:13 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 01:28:13 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 01:28:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 01:28:44 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 01:28:49 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:28:49 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:28:49 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 01:28:49 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 01:28:54 | WLAN     | 11006  | Error       | 动态密钥交换在配置的时间范围内未能成功
+2026-09-10 01:28:55 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 01:28:55 | WLAN     | 8002   | Error       | 无线连接失败 [原因: 特定的网络不可用。, RSSI: -60]
+2026-09-10 01:28:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 01:29:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 01:29:29 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 01:29:35 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:29:35 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:29:35 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 01:29:35 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 01:29:35 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-10 01:29:36 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-10 01:29:45 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 自动选择, 故障转移. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 01:29:45 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 01:29:50 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (677ms)
+2026-09-10 01:29:55 | Watchdog | -      | ERROR       | Repair-MihomoGroup('故障转移') failed: 远程服务器返回错误: (504) 网关超时。
+2026-09-10 02:08:02 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 02:08:02 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 02:08:07 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (80ms)
+2026-09-10 02:08:12 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (98ms)
+2026-09-10 02:28:32 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 02:28:32 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 02:28:37 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (61ms)
+2026-09-10 02:28:42 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (84ms)
+2026-09-10 02:35:28 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 02:35:28 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 02:35:33 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (100ms)
+2026-09-10 02:35:38 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (98ms)
+2026-09-10 02:43:43 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 02:43:43 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 02:43:48 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (96ms)
+2026-09-10 02:43:53 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (73ms)
+2026-09-10 02:57:56 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 02:57:56 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 02:58:01 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (179ms)
+2026-09-10 02:58:06 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (166ms)
+2026-09-10 03:11:41 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=True gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:11:41 | Watchdog | -      | DIAG        | All 4 WAN targets unreachable: 223.5.5.5:53, 119.29.29.29:53, 114.114.114.114:53, www.baidu.com:443
+2026-09-10 03:11:45 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 03:11:52 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-10 03:11:57 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:12:12 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:12:27 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:12:42 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:12:57 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 03:12:57 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:12:57 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 03:12:57 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 03:13:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:13:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:13:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:13:58 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:14:13 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:14:28 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:14:43 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:14:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:15:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:15:29 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:15:44 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:15:59 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 03:15:59 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 03:15:59 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:15:59 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 03:16:14 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:16:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:16:45 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:17:00 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:17:15 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:17:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:17:45 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:18:00 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:18:16 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:18:31 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:18:46 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:19:01 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 03:19:01 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 03:19:01 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:19:01 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 03:19:16 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:19:31 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:19:46 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:20:02 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:20:17 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:20:32 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:20:47 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:21:02 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:21:17 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:21:32 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:21:47 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:22:03 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:22:03 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 03:22:03 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 03:22:03 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 03:22:18 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:22:33 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:22:48 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:23:03 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:23:18 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:23:33 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:23:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:24:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:24:19 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:24:34 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:24:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:25:04 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 03:25:04 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 03:25:04 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 03:25:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:25:20 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:25:35 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:25:50 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:26:05 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:26:20 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:26:35 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:26:50 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:27:05 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:27:21 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:27:36 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:27:51 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:28:06 | Watchdog | -      | ACTION      | Flushing DNS cache (ipconfig /flushdns)
+2026-09-10 03:28:06 | Watchdog | -      | DIAG        | NIC reset requested but DISABLED by default (-AllowNicReset not set). Not touching the adapter. See script header.
+2026-09-10 03:28:06 | Watchdog | -      | DIAG        | Sustained adapter-down or both-public-targets-unreachable. Escalating to adapter reconnect.
+2026-09-10 03:28:06 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=6/6
+2026-09-10 03:28:21 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:28:36 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:28:51 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:29:07 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:29:22 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=5/6
+2026-09-10 03:29:27 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 03:29:27 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 03:29:27 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 03:29:27 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 03:29:27 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-10 03:29:27 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-10 03:29:37 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 自动选择, 故障转移. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 03:29:37 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 03:29:42 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (93ms)
+2026-09-10 03:29:47 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (142ms)
+2026-09-10 03:37:30 | Watchdog | -      | DIAG        | All 4 WAN targets unreachable: 223.5.5.5:53, 119.29.29.29:53, 114.114.114.114:53, www.baidu.com:443
+2026-09-10 03:37:30 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=True gatewayOk=False wanOk=False) streak=1/6
+2026-09-10 03:37:42 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 03:37:47 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-10 03:37:49 | Watchdog | -      | DIAG        | All 4 WAN targets unreachable: 223.5.5.5:53, 119.29.29.29:53, 114.114.114.114:53, www.baidu.com:443
+2026-09-10 03:37:49 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=True gatewayOk=False wanOk=False) streak=2/6
+2026-09-10 03:38:04 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=3/6
+2026-09-10 03:38:19 | Watchdog | -      | WARN        | Link/WAN check failed (adapterUp=False gatewayOk=False wanOk=False) streak=4/6
+2026-09-10 03:38:32 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 03:38:32 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 03:38:32 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 03:38:32 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 03:38:32 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-10 03:38:32 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-10 03:38:35 | Watchdog | -      | WARN        | Direct WAN is fine and proxy port is open, but a real request THROUGH the proxy failed. Active node is dead (cached delay is stale-good). Forcing a re-test/switch on all groups.
+2026-09-10 03:38:35 | Watchdog | -      | DIAG        | 2 proxy group(s) need a node switch: 故障转移, 自动选择. Re-testing and switching, not touching the NIC or restarting processes.
+2026-09-10 03:38:40 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (208ms)
+2026-09-10 03:38:45 | Watchdog | -      | ACTION      | Re-tested auto-select group '[ProxyNode]; best member now '[ProxyNode] (114ms)
+2026-09-10 03:53:52 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-10 03:56:29 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.

@@ -8,8 +8,9 @@
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [ValidateSet('Diagnose', 'FullHealth', 'Bundle', 'ExportDrivers', 'BackupDrivers', 'Menu', 'Help')]
+    [ValidateSet('Diagnose', 'FullHealth', 'Bundle', 'ExportDrivers', 'BackupDrivers', 'Menu', 'Help', 'Timeline')]
     [string]$Action = 'Menu',
+    [int]$HoursBack = 0,
     [switch]$IncludeSensitiveNetworkData
 )
 
@@ -253,8 +254,112 @@ function Invoke-RunDiagnosis {
     Write-Host "=======================================================================" -ForegroundColor Cyan
 }
 
+function Invoke-RunTimelineAnalysis {
+    [CmdletBinding()]
+    param(
+        [int]$Hours = -1
+    )
+
+    Write-Host "=======================================================================" -ForegroundColor Cyan
+    Write-Host "                正在执行断网时间线关联分析...                          " -ForegroundColor Cyan
+    Write-Host "=======================================================================" -ForegroundColor Cyan
+
+    $fwd = @{}
+    if ($PSBoundParameters.ContainsKey('Hours') -and $Hours -ge 0) {
+        $fwd['HoursBack'] = $Hours
+    }
+    $timeline = Get-NetworkEventTimeline @fwd
+
+    Write-Host "`n[时间线汇总统计]" -ForegroundColor Yellow
+    Write-Host "   - 分析时间窗口: 最近 $($timeline.HoursBack) 小时 (起始时间: $($timeline.StartTime))"
+    Write-Host "   - 捕获事件与动作总数: $($timeline.TotalRecords) 条"
+    Write-Host "   - WLAN 断开事件次数 (ID 8003/11004等): $($timeline.DisconnectCount) 次"
+    Write-Host "   - WLAN 重连/连接失败次数 (ID 8002等): $($timeline.ReconnectFailureCount) 次"
+    Write-Host "   - 动态密钥交换超时次数 (ID 11006等): $($timeline.KeyExchangeTimeoutCount) 次"
+    Write-Host "   - RSSI 异常值 (如 255) 出现次数: $($timeline.RssiAbnormalCount) 次"
+    Write-Host "   - 看门狗动作执行次数: $($timeline.WatchdogActionCount) 次"
+    if (@($timeline.WatchdogActions).Count -gt 0) {
+        Write-Host "   - 执行过的看门狗动作列表: $(@($timeline.WatchdogActions | Select-Object -Unique) -join '; ')"
+    }
+
+    if ($timeline.OtherEventCounts.Keys.Count -gt 0) {
+        Write-Host "`n[其他未分类事件 ID 频次统计]:" -ForegroundColor Yellow
+        foreach ($k in ($timeline.OtherEventCounts.Keys | Sort-Object)) {
+            Write-Host "   - 事件 [$k]: $($timeline.OtherEventCounts[$k]) 次"
+        }
+    }
+
+    if (@($timeline.Warnings).Count -gt 0) {
+        Write-Host "`n[执行提示与跳过说明]:" -ForegroundColor Gray
+        foreach ($w in $timeline.Warnings) {
+            Write-Host "   * $w" -ForegroundColor Gray
+        }
+    }
+
+    # 完整时序表写入 logs\ 目录 (带时间戳)
+    $logsDir = Join-Path $ToolRoot "logs"
+    if (-not (Test-Path -LiteralPath $logsDir)) {
+        New-Item -Path $logsDir -ItemType Directory -Force | Out-Null
+    }
+    $tsStr = (Get-Date).ToString("yyyyMMdd_HHmmss")
+    $logFile = Join-Path $logsDir "timeline_$tsStr.log"
+
+    $logLines = [System.Collections.Generic.List[string]]::new()
+    $logLines.Add("================================================================================")
+    $logLines.Add("Windows 10/11 便携网络诊断工具箱 - 断网时间线关联分析报告")
+    $logLines.Add("生成时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | 分析窗口: 最近 $($timeline.HoursBack) 小时")
+    $logLines.Add("免责声明: $($timeline.Disclaimer)")
+    $logLines.Add("================================================================================")
+    $fmtHeader = "{0,-19} | {1,-8} | {2,-6} | {3,-11} | {4}" -f "时间戳", "来源", "事件ID", "级别", "事件摘要"
+    $logLines.Add($fmtHeader)
+    $logLines.Add("-" * 80)
+
+    foreach ($r in $timeline.Records) {
+        $eidStr = if ($r.EventId) { [string]$r.EventId } else { "-" }
+        $lineText = "{0,-19} | {1,-8} | {2,-6} | {3,-11} | {4}" -f $r.TimeCreated, $r.Source, $eidStr, $r.Level, $r.Summary
+        $logLines.Add($lineText)
+    }
+
+    [System.IO.File]::WriteAllLines($logFile, $logLines, [System.Text.Encoding]::UTF8)
+
+    Write-Host "`n[完整时序表已落盘]" -ForegroundColor Green
+    Write-Host "   - 完整记录文件: $logFile"
+
+    # 控制台只显示汇总统计 + 最近 20 条
+    Write-Host "`n[最近事件时序流 (控制台展示最近 20 条)]:" -ForegroundColor Yellow
+    if ($timeline.TotalRecords -eq 0) {
+        Write-Host "   该时间窗内无事件 (0 条记录)。" -ForegroundColor Gray
+    } else {
+        $recent20 = @($timeline.Records | Select-Object -Last 20)
+        foreach ($r in $recent20) {
+            $eidStr = if ($r.EventId) { "[ID: $($r.EventId)]" } else { "[Action]" }
+            $srcColor = switch ($r.Source) {
+                'WLAN'     { [ConsoleColor]::Magenta }
+                'System'   { [ConsoleColor]::Cyan }
+                'Watchdog' { [ConsoleColor]::Yellow }
+                default    { [ConsoleColor]::White }
+            }
+            Write-Host -NoNewline "   $($r.TimeCreated) " -ForegroundColor Gray
+            Write-Host -NoNewline "[$($r.Source)] " -ForegroundColor $srcColor
+            Write-Host -NoNewline "$eidStr " -ForegroundColor White
+            Write-Host "$($r.Summary)"
+        }
+    }
+
+    # 免责说明 (原文照写)
+    Write-Host "`n$($timeline.Disclaimer)" -ForegroundColor Cyan
+}
+
+
 try {
     switch ($Action) {
+        'Timeline' {
+            $fwd = @{}
+            if ($PSBoundParameters.ContainsKey('HoursBack')) {
+                $fwd['Hours'] = $HoursBack
+            }
+            Invoke-RunTimelineAnalysis @fwd
+        }
         { $_ -in @('Diagnose', 'FullHealth') } {
             Invoke-RunDiagnosis
         }
@@ -281,6 +386,7 @@ try {
         'Help' {
             Write-Host "便携网络诊断工具箱使用帮助:" -ForegroundColor Cyan
             Write-Host "  -Action FullHealth / Diagnose  : 执行纯只读网络健康诊断并输出控制台"
+            Write-Host "  -Action Timeline [-HoursBack N]: 执行断网时间线关联分析 (默认 24 小时)"
             Write-Host "  -Action Bundle                 : 采集脱敏日志并打包为 output\*.zip"
             Write-Host "  -Action BackupDrivers          : 使用 PnPUtil 只读备份驱动至 backups\Drivers"
             Write-Host "  -Action Menu                   : 打开交互式主菜单 (默认)"
@@ -303,12 +409,23 @@ try {
                 Write-Host "   [1] Execute Read-Only Network Diagnostics (执行纯只读网络健康与配置诊断)" -ForegroundColor White
                 Write-Host "   [2] Generate Diagnostic Log Bundle (ZIP) (生成诊断报告与脱敏压缩包)" -ForegroundColor White
                 Write-Host "   [3] Export Third-Party Network Driver Catalog (导出第三方网络驱动清单与包)" -ForegroundColor White
+                Write-Host "   [4] Analyze Disconnection Timeline (断网时间线关联分析)" -ForegroundColor White
                 Write-Host "   [0] Exit (退出工具箱)" -ForegroundColor Gray
                 Write-Host "=======================================================================" -ForegroundColor Cyan
-                Write-Host "请输入选项数字 [0-3]: " -ForegroundColor Yellow -NoNewline
+                Write-Host "请输入选项数字 [0-4]: " -ForegroundColor Yellow -NoNewline
                 $choice = Read-Host
 
                 switch ($choice.Trim()) {
+                    '4' {
+                        Write-Host "Enter hours to look back (default from config, e.g. 24): " -ForegroundColor Yellow -NoNewline
+                        $hInput = Read-Host
+                        $hVal = 0
+                        if ($hInput.Trim() -match '^\d+$') {
+                            $hVal = [int]$hInput.Trim()
+                        }
+                        Invoke-RunTimelineAnalysis -Hours $hVal
+                        Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                    }
                     '1' { Invoke-RunDiagnosis; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }
                     '2' {
                         Write-Host "Include WLAN profiles? (Y/N, default N): " -ForegroundColor Yellow -NoNewline

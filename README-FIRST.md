@@ -62,8 +62,18 @@ Network-Recovery-USB\
      交互提示 `Include WLAN profiles? (Y/N, default N)`（默认 N，即不包含明文 SSID 与 Wi-Fi 配置文件），调用 `New-DiagnosticBundle -ToolRoot $ToolRoot -IncludeWlanReport:$incWlan` 在 `output\` 生成脱敏 `NetworkDiagnosticBundle-*.zip`。
    - `[3] Export Third-Party Network Driver Catalog (导出第三方网络驱动清单与包)`：
      调用 `Export-NetworkDrivers`。若当前为普通用户权限，检测到未提权后打印 `Driver catalog export requires Administrator privileges.` 及 `Relaunching with elevation...`，通过 UAC 弹窗提权启动新进程只读导出至 `backups\network-drivers-*` 目录；若已具备管理员权限则直接运行 `pnputil /export-driver` 备份。
+   - `[4] Analyze Disconnection Timeline (断网时间线关联分析)`：
+     调用 `Invoke-RunTimelineAnalysis`，三路只读合并分析 WLAN Operational 日志、System 日志关键网络事件与本机看门狗日志（可选）。统计断开事件次数、连接失败次数、密钥交换超时、异常 RSSI 值（如 255）及看门狗动作执行历史。控制台展示汇总统计与最近 20 条事件流，完整时序表自动落盘写入 `logs\timeline_*.log`。末尾附带官方免责说明：“以上仅为时间相关性，不构成因果结论。”
    - `[0] Exit (退出工具箱)`：
      打印 `Exiting.`，跳出主循环并释放单实例互斥锁退出。
+
+3. **命令行执行 (-Action 逐字对应)**：
+   - `-Action FullHealth` / `-Action Diagnose`：执行 12 项纯只读网络健康诊断
+   - `-Action Timeline [-HoursBack N]`：执行断网时间线关联分析 (默认回溯 24 小时)
+   - `-Action Bundle`：生成脱敏诊断报告并打包至 `output\`
+   - `-Action BackupDrivers` / `-Action ExportDrivers`：导出第三方网络驱动至 `backups\`
+   - `-Action Menu`：打开交互式主菜单 (默认)
+   - `-Action Help`：查看帮助信息
 
 ---
 

@@ -1,0 +1,93 @@
+﻿================================================================================
+Windows 10/11 便携网络诊断工具箱 - 断网时间线关联分析报告
+生成时间: 2026-09-10 04:54:54 | 分析窗口: 最近 24 小时
+免责声明: 以上仅为时间相关性，不构成因果结论。
+================================================================================
+时间戳                 | 来源       | 事件ID   | 级别          | 事件摘要
+--------------------------------------------------------------------------------
+2026-09-09 09:34:01 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 09:44:55 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 11:17:22 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 13:52:39 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-09 13:52:42 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 13:52:47 | WLAN     | 11006  | Error       | 动态密钥交换在配置的时间范围内未能成功
+2026-09-09 13:52:47 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-09 13:52:47 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-09 14:33:14 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-09 14:33:14 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-09 14:33:15 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-09 14:33:15 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 14:33:15 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-09 14:33:15 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-09 16:41:13 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-09 16:41:18 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-09 16:53:35 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-09 16:53:35 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-09 16:53:35 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-09 16:53:35 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 16:53:35 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-09 16:53:35 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-09 22:52:09 | System   | 8000   | Information | MT7922 无线驱动底层事件 (ID: 8000)
+2026-09-09 22:52:17 | System   | 50036  | Information | [Microsoft-Windows-Dhcp-Client] DHCPv4 client service is started
+2026-09-09 22:52:17 | System   | 50103  | Information | [Microsoft-Windows-Dhcp-Client] DHCPv4 client registered for shutdown notification
+2026-09-09 22:52:17 | System   | 50036  | Information | [Microsoft-Windows-Dhcp-Client] DHCPv4 client service is started
+2026-09-09 22:52:17 | System   | 51046  | Information | [Microsoft-Windows-DHCPv6-Client] DHCPv6 client service is started
+2026-09-09 22:52:20 | System   | 4000   | Information | [Microsoft-Windows-WLAN-AutoConfig] WLAN AutoConfig service has successfully started.
+2026-09-09 22:52:20 | System   | 10001  | Information | [Microsoft-Windows-WLAN-AutoConfig] WLAN Extensibility Module has successfully started.
+2026-09-09 22:52:50 | System   | 4207   | Error       | TCP/IP 接口绑定提供程序失败 (ID 4207)
+2026-09-09 22:52:50 | System   | 4207   | Error       | TCP/IP 接口绑定提供程序失败 (ID 4207)
+2026-09-09 22:53:10 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-09 22:53:10 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-09 22:53:10 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-09 22:53:10 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-09 22:53:10 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-09 22:53:11 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-09 22:55:23 | System   | 7045   | Information | 系统安装了新服务/驱动: KUsbGuard
+2026-09-09 22:59:31 | System   | 1014   | Warning     | DNS 解析超时告警: www.microsoft.com
+2026-09-09 23:00:07 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:01:46 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 23:04:45 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:04:58 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 23:18:17 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:18:26 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-09 23:31:52 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
+2026-09-09 23:46:17 | System   | 7045   | Information | 系统安装了新服务/驱动: WinDivert
+2026-09-10 01:26:51 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 01:26:56 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-10 01:27:02 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:27:02 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:27:04 | WLAN     | 8002   | Error       | 无线连接失败 [原因: 特定的网络不可用。, RSSI: 255]
+2026-09-10 01:27:26 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:27:26 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:27:32 | WLAN     | 8002   | Error       | 无线连接失败 [原因: 特定的网络不可用。, RSSI: 255]
+2026-09-10 01:28:49 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:28:49 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:28:49 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 01:28:49 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 01:28:54 | WLAN     | 11006  | Error       | 动态密钥交换在配置的时间范围内未能成功
+2026-09-10 01:28:55 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 01:28:55 | WLAN     | 8002   | Error       | 无线连接失败 [原因: 特定的网络不可用。, RSSI: -60]
+2026-09-10 01:29:35 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 01:29:35 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 01:29:35 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 01:29:35 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 01:29:35 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-10 01:29:36 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-10 03:11:45 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 03:11:52 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-10 03:29:27 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 03:29:27 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 03:29:27 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 03:29:27 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 03:29:27 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-10 03:29:27 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-10 03:37:42 | WLAN     | 11004  | Information | 无线安全已停止 (Security stopped)
+2026-09-10 03:37:47 | WLAN     | 8003   | Information | 无线网络被断开 [原因: 网络被驱动程序断开连接。]
+2026-09-10 03:38:32 | WLAN     | 8000   | Information | 发起无线网络连接 (Association started)
+2026-09-10 03:38:32 | WLAN     | 11000  | Information | 无线网络关联开始
+2026-09-10 03:38:32 | WLAN     | 11001  | Information | 无线网络关联成功
+2026-09-10 03:38:32 | WLAN     | 11010  | Information | 无线安全开始 (Security started)
+2026-09-10 03:38:32 | WLAN     | 11005  | Information | 无线安全握手成功 (Security succeeded)
+2026-09-10 03:38:32 | WLAN     | 8001   | Information | 成功连接到无线网络 (Connected)
+2026-09-10 03:53:52 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 按需启动 to 自动启动.
+2026-09-10 03:56:29 | System   | 7040   | Information | 服务启动类型变更: The start type of the Background Intelligent Transfer Service service was changed from 自动启动 to 按需启动.
