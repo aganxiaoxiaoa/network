@@ -51,7 +51,7 @@ function Test-RawTcpTargets {
 
     foreach ($tgt in $Targets) {
         $parts = $tgt -split ':'
-        if ($parts.Count -ne 2) { continue }
+        if (@($parts).Count -ne 2) { continue }
         $hostName = $parts[0].Trim()
         $port = [int]$parts[1]
 
@@ -129,4 +129,4 @@ Export-ModuleMember -Function @(
     'Test-DynamicGateway',
     'Test-RawTcpTargets',
     'Test-DnsResolution'
-)
+)

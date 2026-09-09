@@ -51,17 +51,18 @@ function Invoke-RunDiagnosis {
     Write-Host "=======================================================================" -ForegroundColor Cyan
 
     # 1. 本地看门狗互斥与状态检测
-    Write-Host "[1/9] 本地网络看门狗安全互斥检测:" -ForegroundColor Yellow
+    Write-Host "[1/12] 本地网络看门狗安全互斥检测:" -ForegroundColor Yellow
     $wdStatus = Get-LocalWatchdogStatus
     if ($wdStatus.IsProtected) {
         Write-Host "   - 本地已有看门狗状态: 正在运行中 (计划任务: $($wdStatus.TaskState), PID: $($wdStatus.ProcessId))" -ForegroundColor Green
+        Write-Host "   - 代理进程 (Clash/ProxyStack) 数量: $($wdStatus.ProxyStackCount)" -ForegroundColor Gray
         Write-Host "   - [安全锁闭] 检测到本地已有网络看门狗。为了避免双重监控干扰，本 U 盘工具全面锁定为纯只读诊断模式。" -ForegroundColor Cyan
     } else {
         Write-Host "   - 未检测到运行中的本地看门狗进程或任务。" -ForegroundColor Gray
     }
 
-    # 2. 默认路由与网关
-    Write-Host "`n[2/9] 默认路由与下一跳网关探测:" -ForegroundColor Yellow
+    # 2. IPv4 默认路由与网关
+    Write-Host "`n[2/12] IPv4 默认路由与下一跳网关探测:" -ForegroundColor Yellow
     $routeInfo = Get-DefaultRouteInfo
     if ($routeInfo.HasDefaultRoute) {
         Write-Host "   - 默认路由: 0.0.0.0/0 存在" -ForegroundColor Green
@@ -72,9 +73,33 @@ function Invoke-RunDiagnosis {
         Write-Host "   - [警告] 未检测到有效的 IPv4 默认路由 (0.0.0.0/0)" -ForegroundColor Red
     }
 
-    # 3. 物理适配器核验
-    Write-Host "`n[3/9] 活动网络适配器核验:" -ForegroundColor Yellow
+    # 3. IPv6 默认路由与双栈状态检测 (新增能力 1)
+    Write-Host "`n[3/12] IPv6 默认路由与双栈状态检测:" -ForegroundColor Yellow
     $nicIndex = if ($routeInfo.HasDefaultRoute) { [int]$routeInfo.InterfaceIndex } else { 0 }
+    $v6Info = Get-IPv6Status -PreferredInterfaceIndex $nicIndex
+    if ($v6Info.HasDefaultRoute) {
+        Write-Host "   - IPv6 默认路由: ::/0 存在" -ForegroundColor Green
+        Write-Host "   - 接口索引: $($v6Info.InterfaceIndex) ($($v6Info.InterfaceAlias))"
+        Write-Host "   - 下一跳网关: $($v6Info.NextHop)"
+        Write-Host "   - 有效跃点 (Metric): $($v6Info.EffectiveMetric) (Route: $($v6Info.RouteMetric) + Intf: $($v6Info.InterfaceMetric))"
+        if (@($v6Info.GlobalAddresses).Count -gt 0) {
+            Write-Host "   - 全球单播 IPv6 地址 (GUA): $(@($v6Info.GlobalAddresses) -join ', ')" -ForegroundColor Green
+        }
+        Write-Host "   - 双栈状态判定: IPv4/IPv6 双栈路由均配置完整" -ForegroundColor Cyan
+    } else {
+        Write-Host "   - IPv6 默认路由: 未配置默认路由 (::/0 不存在)" -ForegroundColor Gray
+        if (@($v6Info.GlobalAddresses).Count -gt 0) {
+            Write-Host "   - 虽分配有公网 IPv6 地址 ($(@($v6Info.GlobalAddresses) -join ', '))，但无默认网关路由" -ForegroundColor Yellow
+        }
+        if ($routeInfo.HasDefaultRoute) {
+            Write-Host "   - 双栈状态判定: 当前网络运行在纯 IPv4 单栈模式 (无 IPv6 默认网关，不会发生 IPv6 双栈黑洞超时)" -ForegroundColor Green
+        } else {
+            Write-Host "   - 双栈状态判定: [严重] IPv4 与 IPv6 默认路由均不存在 (彻底断网)" -ForegroundColor Red
+        }
+    }
+
+    # 4. 活动网络适配器核验与电源管理 (新增能力 2)
+    Write-Host "`n[4/12] 活动网络适配器核验与硬件电源管理:" -ForegroundColor Yellow
     $nic = Get-ActivePhysicalAdapter -PreferredInterfaceIndex $nicIndex
     if ($nic.Found) {
         $color = if ($nic.Status -eq 'Up') { [ConsoleColor]::Green } else { [ConsoleColor]::Yellow }
@@ -84,12 +109,37 @@ function Invoke-RunDiagnosis {
         Write-Host "   - 链路状态: $($nic.Status) (速度: $($nic.LinkSpeed))"
         Write-Host "   - MAC 地址: $($nic.MacAddress)"
         Write-Host "   - 承载默认路由: $(if ($nic.IsDefaultRouteOwner) { '是' } else { '否 (可能由 VPN/虚拟接口或备用网卡承载)' })"
+
+        # 只读读取网卡电源管理设置
+        $pmStatus = Get-AdapterPowerManagementStatus -AdapterName $nic.Name
+        if ($pmStatus.PowerSavingEnabled) {
+            Write-Host "   - 硬件节能状态: [警告] 允许计算机关闭此设备以节约电源 (Enabled)" -ForegroundColor Red
+            Write-Host "     $($pmStatus.Note)" -ForegroundColor Yellow
+        } else {
+            Write-Host "   - 硬件节能状态: $($pmStatus.AllowTurnOffDevice) ($($pmStatus.Note))" -ForegroundColor Gray
+        }
     } else {
         Write-Host "   - [警告] 未找到符合条件的活动物理网络适配器！" -ForegroundColor Red
     }
 
-    # 4. IP 与 DHCP 检查
-    Write-Host "`n[4/9] IP 配置与 DHCP 分配:" -ForegroundColor Yellow
+    # 5. 无线链路质量 (RSSI / 信号 / 信道 / 频段 / 协商速率) (新增能力 3)
+    Write-Host "`n[5/12] 无线链路质量指标 (RSSI / 信道 / 协商速率):" -ForegroundColor Yellow
+    $wlanQuality = Get-WlanLinkQuality
+    if ($wlanQuality.Available) {
+        Write-Host "   - 无线连接状态: $($wlanQuality.State)" -ForegroundColor Green
+        Write-Host "   - SSID (脱敏): $($wlanQuality.SSID)"
+        Write-Host "   - BSSID (脱敏): $($wlanQuality.BSSID)"
+        Write-Host "   - 无线电类型: $($wlanQuality.RadioType) | 频段: $($wlanQuality.Band) | 工作信道: $($wlanQuality.Channel)"
+        Write-Host "   - 协商速率: 接收 $($wlanQuality.ReceiveRate) Mbps / 传输 $($wlanQuality.TransmitRate) Mbps"
+        $sigColor = if ($wlanQuality.SignalPercent -ge 70) { [ConsoleColor]::Green } elseif ($wlanQuality.SignalPercent -ge 50) { [ConsoleColor]::Yellow } else { [ConsoleColor]::Red }
+        Write-Host "   - 信号强度: $($wlanQuality.SignalPercent)% (估算 RSSI: $($wlanQuality.RssiEstimated) dBm)" -ForegroundColor $sigColor
+        Write-Host "   - 链路质量评估: $($wlanQuality.Note)" -ForegroundColor Gray
+    } else {
+        Write-Host "   - 状态/说明: $($wlanQuality.Note)" -ForegroundColor Gray
+    }
+
+    # 6. IP 配置与 DHCP 租约详细信息 (新增能力 4 + Bug 2 修复)
+    Write-Host "`n[6/12] IP 配置与 DHCP 租约详细信息:" -ForegroundColor Yellow
     $ipDetails = if ($nic.Found) { Get-AdapterIpDetails -InterfaceIndex $nic.InterfaceIndex } else { Get-AdapterIpDetails -InterfaceIndex 0 }
     if ($ipDetails.IPv4Address) {
         if ($ipDetails.IsApipa) {
@@ -101,10 +151,36 @@ function Invoke-RunDiagnosis {
         Write-Host "   - 未分配 IPv4 地址" -ForegroundColor Yellow
     }
     Write-Host "   - DHCP 状态: $(if ($ipDetails.DhcpEnabled) { '已启用 (动态获取)' } else { '已禁用 (静态配置或受控网络)' })"
-    Write-Host "   - DNS 服务器: $(if ($ipDetails.DnsServers.Count -gt 0) { $ipDetails.DnsServers -join ', ' } else { '[无 DNS 服务器配置]' })"
+    # Bug 2 修复: @($ipDetails.DnsServers).Count
+    Write-Host "   - DNS 服务器: $(if (@($ipDetails.DnsServers).Count -gt 0) { $ipDetails.DnsServers -join ', ' } else { '[无 DNS 服务器配置]' })"
 
-    # 5. 网关连通性 (ICMP Ping, 仅作参考)
-    Write-Host "`n[5/9] 动态网关连通性 (参考信号):" -ForegroundColor Yellow
+    # 读取 DHCP 租约生命周期详情
+    $dhcpLease = Get-DhcpLeaseInfo
+    if ($dhcpLease.DhcpActive) {
+        Write-Host "   - DHCP 路由器/服务器: $($dhcpLease.DHCPServer)"
+        Write-Host "   - 租约获取时间: $($dhcpLease.LeaseObtained)"
+        Write-Host "   - 租约到期时间: $($dhcpLease.LeaseExpires)"
+        $remColor = if ($dhcpLease.RemainingMinutes -lt 15) { [ConsoleColor]::Red } else { [ConsoleColor]::Green }
+        Write-Host "   - 剩余有效时间: $($dhcpLease.RemainingMinutes) 分钟 (约 $($dhcpLease.RemainingHours) 小时)" -ForegroundColor $remColor
+        Write-Host "   - RFC 2131 机制说明: $($dhcpLease.LeaseStateNote)" -ForegroundColor Gray
+    } else {
+        Write-Host "   - DHCP 租约说明: $($dhcpLease.LeaseStateNote)" -ForegroundColor Gray
+    }
+
+    # 7. NCSI 系统网络连通性判定 (新增能力 5)
+    Write-Host "`n[7/12] NCSI 系统连通性判定与探针状态 (只读):" -ForegroundColor Yellow
+    $ncsi = Get-NcsiStatus
+    $ncsiColor = if ($ncsi.IPv4Connectivity -eq 'Internet') { [ConsoleColor]::Green } else { [ConsoleColor]::Yellow }
+    Write-Host "   - Windows 任务栏连接判定: IPv4 -> $($ncsi.IPv4Connectivity), IPv6 -> $($ncsi.IPv6Connectivity)" -ForegroundColor $ncsiColor
+    Write-Host "   - 网络位置类别 (Category): $($ncsi.NetworkCategory)"
+    Write-Host "   - 网络位置感知服务 (NlaSvc): $($ncsi.NlaServiceStatus)"
+    Write-Host "   - 注册表主动探测开关 (EnableActiveProbing): $($ncsi.EnableActiveProbing)"
+    Write-Host "   - HTTP Web 探针地址: http://$($ncsi.ActiveWebProbeHost)/connecttest.txt"
+    Write-Host "   - DNS 连通性探针域名: $($ncsi.ActiveDnsProbeHost)"
+    Write-Host "   - 判定原理说明: $($ncsi.DiagnosisNote)" -ForegroundColor Gray
+
+    # 8. 网关连通性 (ICMP Ping, 仅作参考)
+    Write-Host "`n[8/12] 动态网关连通性 (参考信号):" -ForegroundColor Yellow
     $gwTest = Test-DynamicGateway -Gateway $routeInfo.NextHop
     if ($gwTest.PingOk) {
         Write-Host "   - 网关 ($($gwTest.Gateway)) ICMP 连通: 正常响应" -ForegroundColor Green
@@ -112,8 +188,8 @@ function Invoke-RunDiagnosis {
         Write-Host "   - 网关 ($($gwTest.Gateway)) ICMP 连通: $($gwTest.Note)" -ForegroundColor Yellow
     }
 
-    # 6. 公网直连 TCP 握手探测 (绕过代理直连)
-    Write-Host "`n[6/9] 公网直连 TCP 握手 (绕过系统代理，4 个不同运营商/端口目标):" -ForegroundColor Yellow
+    # 9. 公网直连 TCP 握手探测 (绕过代理直连)
+    Write-Host "`n[9/12] 公网直连 TCP 握手 (绕过系统代理，4 个不同运营商/端口目标):" -ForegroundColor Yellow
     $tcpProbe = Test-RawTcpTargets -Targets $cfg.PublicWanTargets -TimeoutMs $cfg.TcpProbeTimeoutMs
     foreach ($d in $tcpProbe.Details) {
         $tColor = if ($d.Connected) { [ConsoleColor]::Green } else { [ConsoleColor]::Red }
@@ -126,8 +202,8 @@ function Invoke-RunDiagnosis {
         Write-Host "   => 公网链路判断: [警告] 所有公网直连目标均无法握手 (物理断网或局域网被严密隔离)" -ForegroundColor Red
     }
 
-    # 7. DNS 域名解析
-    Write-Host "`n[7/9] 域名系统 (DNS) 解析测试:" -ForegroundColor Yellow
+    # 10. DNS 域名解析
+    Write-Host "`n[10/12] 域名系统 (DNS) 解析测试:" -ForegroundColor Yellow
     $dnsProbe = Test-DnsResolution -Domain $cfg.DnsTestDomain
     if ($dnsProbe.Resolves) {
         Write-Host "   - 测试域名: $($dnsProbe.Domain) -> 解析为: $($dnsProbe.Addresses)" -ForegroundColor Green
@@ -135,8 +211,8 @@ function Invoke-RunDiagnosis {
         Write-Host "   - 测试域名: $($dnsProbe.Domain) -> 解析失败: $($dnsProbe.Error)" -ForegroundColor Red
     }
 
-    # 8. 代理配置只读检查
-    Write-Host "`n[8/9] 系统代理配置 (WinINET / WinHTTP 只读):" -ForegroundColor Yellow
+    # 11. 代理配置只读检查
+    Write-Host "`n[11/12] 系统代理配置 (WinINET / WinHTTP 只读):" -ForegroundColor Yellow
     $proxy = Get-ProxyStatus
     if ($proxy.WinInet) {
         $pEnable = ($proxy.WinInet.ProxyEnable -eq 1)
@@ -153,12 +229,23 @@ function Invoke-RunDiagnosis {
         Write-Host "     $line" -ForegroundColor Gray
     }
 
-    # 9. 核心网络服务状态
-    Write-Host "`n[9/9] Windows 核心网络服务状态:" -ForegroundColor Yellow
+    # 12. Windows 核心网络服务状态 (新增能力 6)
+    Write-Host "`n[12/12] Windows 核心网络服务状态 (含 NlaSvc / WinHttpAutoProxySvc):" -ForegroundColor Yellow
     $services = Get-NetworkServiceStatus -ServiceNames $cfg.CoreNetworkServices
+
+    $serviceRoles = @{
+        "Dhcp"                = "DHCP 客户端 (动态 IP 地址与网关/DNS 获取)"
+        "Dnscache"            = "DNS 解析缓存服务 (域名解析性能与名称缓存)"
+        "nsi"                 = "Network Store Interface (网络路由与接口状态通知)"
+        "Wlansvc"             = "WLAN AutoConfig (Wi-Fi 探测、连接与认证状态机)"
+        "NlaSvc"              = "Network Location Awareness (网络位置感知与 NCSI 连通性判定)"
+        "WinHttpAutoProxySvc" = "WinHTTP 自动代理发现 (WPAD 协议与 PAC 脚本处理)"
+    }
+
     foreach ($s in $services) {
         $sColor = if ($s.Status -eq 'Running') { [ConsoleColor]::Green } else { [ConsoleColor]::Yellow }
-        Write-Host ("   - 服务 {0,-12} ({1,-20}): {2,-10} (启动类型: {3})" -f $s.Name, $s.DisplayName, $s.Status, $s.StartType) -ForegroundColor $sColor
+        $role = if ($serviceRoles.ContainsKey($s.Name)) { $serviceRoles[$s.Name] } else { $s.DisplayName }
+        Write-Host ("   - 服务 {0,-20} | 状态: {1,-8} | 启动类型: {2,-10} | 职责: {3}" -f $s.Name, $s.Status, $s.StartType, $role) -ForegroundColor $sColor
     }
 
     Write-Host "`n=======================================================================" -ForegroundColor Cyan
@@ -213,10 +300,10 @@ try {
                 Write-Host " 管理员权限: $adminText" -ForegroundColor $adminColor
                 Write-Host " [安全状态] 本工具已永久移除任何网络重置、网卡重启、DNS/DHCP 或代理修改指令！`n" -ForegroundColor Green
 
-                Write-Host "   [1] 执行完整只读网络健康诊断 (路由 / 网关 / TCP / DNS / 代理 / 服务)" -ForegroundColor White
-                Write-Host "   [2] 生成诊断报告与脱敏压缩包 (仅收集只读信息，安全脱敏)" -ForegroundColor White
-                Write-Host "   [3] 导出第三方网络硬件驱动 (仅 PnPUtil 备份至 U 盘，不安装、不删除)" -ForegroundColor White
-                Write-Host "   [0] 退出工具箱" -ForegroundColor Gray
+                Write-Host "   [1] Execute Read-Only Network Diagnostics (执行纯只读网络健康与配置诊断)" -ForegroundColor White
+                Write-Host "   [2] Generate Diagnostic Log Bundle (ZIP) (生成诊断报告与脱敏压缩包)" -ForegroundColor White
+                Write-Host "   [3] Export Third-Party Network Driver Catalog (导出第三方网络驱动清单与包)" -ForegroundColor White
+                Write-Host "   [0] Exit (退出工具箱)" -ForegroundColor Gray
                 Write-Host "=======================================================================" -ForegroundColor Cyan
                 Write-Host "请输入选项数字 [0-3]: " -ForegroundColor Yellow -NoNewline
                 $choice = Read-Host
@@ -224,7 +311,7 @@ try {
                 switch ($choice.Trim()) {
                     '1' { Invoke-RunDiagnosis; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }
                     '2' {
-                        Write-Host "是否在诊断包中包含完整 WLAN 报告？(可能包含历史 SSID 与硬件 MAC) [y/N]: " -ForegroundColor Yellow -NoNewline
+                        Write-Host "Include WLAN profiles? (Y/N, default N): " -ForegroundColor Yellow -NoNewline
                         $wlanChoice = Read-Host
                         $incWlan = ($wlanChoice.Trim() -eq 'y' -or $wlanChoice.Trim() -eq 'Y')
                         New-DiagnosticBundle -ToolRoot $ToolRoot -IncludeWlanReport:$incWlan
@@ -232,16 +319,20 @@ try {
                     }
                     '3' {
                         if (-not (Test-IsAdmin)) {
-                            Write-Host "[提示] 导出驱动需要管理员权限，正在请求 UAC 提权..." -ForegroundColor Yellow
+                            Write-Host "Driver catalog export requires Administrator privileges." -ForegroundColor Yellow
+                            Write-Host "Relaunching with elevation..." -ForegroundColor Yellow
                             Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Action ExportDrivers" -Verb RunAs -Wait
                         } else {
                             Export-NetworkDrivers -ToolRoot $ToolRoot
                         }
                         Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
                     }
-                    '0' { break }
+                    '0' {
+                        Write-Host "Exiting." -ForegroundColor Yellow
+                        break
+                    }
                     default {
-                        Write-Host "无效选项，请重新输入。" -ForegroundColor Red
+                        Write-Host "Invalid choice. Press Enter to retry." -ForegroundColor Red
                         Start-Sleep -Seconds 1
                     }
                 }
@@ -253,4 +344,4 @@ try {
         $script:Mutex.ReleaseMutex()
         $script:Mutex.Dispose()
     }
-}
+}

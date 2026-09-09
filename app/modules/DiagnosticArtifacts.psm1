@@ -59,12 +59,12 @@ function Export-NetworkDrivers {
     }
     if ($current) { $driverList += [PSCustomObject]$current }
 
-    if ($driverList.Count -eq 0) {
+    if (@($driverList).Count -eq 0) {
         Write-Host "   - 未检测到任何第三方 oem*.inf 网络驱动 (可能全部为 Windows 内置驱动)。" -ForegroundColor Yellow
         return $true
     }
 
-    Write-Host "   - 共检测到 $($driverList.Count) 个第三方网络硬件驱动:" -ForegroundColor Green
+    Write-Host "   - 共检测到 $(@($driverList).Count) 个第三方网络硬件驱动:" -ForegroundColor Green
     foreach ($d in $driverList) {
         Write-Host ("     * {0,-12} | {1,-18} | {2,-18} | {3}" -f $d.PublishedName, $d.OriginalName, $d.ProviderName, $d.DriverVersion)
     }
@@ -142,7 +142,11 @@ function New-DiagnosticBundle {
             "无法获取 WLAN-AutoConfig 事件日志: $($_.Exception.Message)" | Out-File (Join-Path $tempDir "11_wlan_autoconfig_events.txt") -Encoding UTF8
         }
 
-        (Get-Service Dhcp, Dnscache, nsi, Wlansvc -ErrorAction SilentlyContinue | Format-Table -AutoSize 2>&1) | Out-File (Join-Path $tempDir "12_services.txt") -Encoding UTF8
+        (Get-Service Dhcp, Dnscache, nsi, Wlansvc, NlaSvc, WinHttpAutoProxySvc -ErrorAction SilentlyContinue | Format-Table -AutoSize 2>&1) | Out-File (Join-Path $tempDir "12_services.txt") -Encoding UTF8
+        (Get-CimInstance Win32_NetworkAdapterConfiguration -ErrorAction SilentlyContinue | Where-Object { $_.IPEnabled } | Format-List * 2>&1) | Out-File (Join-Path $tempDir "13_dhcp_lease_config.txt") -Encoding UTF8
+        (Get-NetAdapterPowerManagement -ErrorAction SilentlyContinue | Format-List * 2>&1) | Out-File (Join-Path $tempDir "14_adapter_power_mgmt.txt") -Encoding UTF8
+        (Get-NetConnectionProfile -ErrorAction SilentlyContinue | Format-List * 2>&1) | Out-File (Join-Path $tempDir "15_ncsi_connection_profile.txt") -Encoding UTF8
+        (Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Services\NlaSvc\Parameters\Internet' -ErrorAction SilentlyContinue | Format-List * 2>&1) | Out-File (Join-Path $tempDir "16_ncsi_registry_params.txt") -Encoding UTF8
 
         if ($IncludeWlanReport) {
             Write-Host "   - [警告] 正在生成完整 WLAN 报告 (可能包含历史 SSID、MAC 地址与设备名)..." -ForegroundColor Yellow
@@ -170,4 +174,4 @@ function New-DiagnosticBundle {
 Export-ModuleMember -Function @(
     'Export-NetworkDrivers',
     'New-DiagnosticBundle'
-)
+)

@@ -1,4 +1,4 @@
-﻿# ==============================================================================
+# ==============================================================================
 # NetworkRecovery.Config.psd1
 # 便携网络只读诊断工具箱配置文件
 # 所有路径均基于相对路径 ($ToolRoot)
@@ -18,9 +18,9 @@
     # DNS 域名解析测试域名
     DnsTestDomain = "www.microsoft.com"
 
-    # 核心网络服务检测列表
-    CoreNetworkServices = @("Dhcp", "Dnscache", "nsi", "Wlansvc")
+    # 核心网络服务检测列表 (包含网络基础、无线与代理探测服务)
+    CoreNetworkServices = @("Dhcp", "Dnscache", "nsi", "Wlansvc", "NlaSvc", "WinHttpAutoProxySvc")
 
     # 驱动导出最低 U 盘可用空间 (MB)
     MinFreeSpaceMBForDrivers = 500
-}
+}
