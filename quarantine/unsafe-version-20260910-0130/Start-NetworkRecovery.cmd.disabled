@@ -1,0 +1,6 @@
+@echo off
+setlocal
+title Network Recovery Toolkit (Portable USB)
+cd /d "%~dp0"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0NetworkRecovery.ps1" %*
+endlocal

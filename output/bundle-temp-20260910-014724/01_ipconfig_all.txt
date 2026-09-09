@@ -1,0 +1,61 @@
+﻿
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : tang
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+
+Wireless LAN adapter ��������* 11:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Microsoft Wi-Fi Direct Virtual Adapter #3
+   Physical Address. . . . . . . . . : AA-E2-91-14-3F-E0
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+
+Wireless LAN adapter WLAN:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : MediaTek Wi-Fi 6E MT7922 160MHz Wireless LAN Card
+   Physical Address. . . . . . . . . : A8-E2-91-14-0F-D0
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::b1f4:a54a:c2a1:54ce%12(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 192.168.0.102(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Lease Obtained. . . . . . . . . . : 2026��9��9�� 22:53:11
+   Lease Expires . . . . . . . . . . : 2026��9��10�� 3:29:35
+   Default Gateway . . . . . . . . . : 192.168.0.1
+   DHCP Server . . . . . . . . . . . : 192.168.0.1
+   DHCPv6 IAID . . . . . . . . . . . : 363389585
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-2F-48-73-48-B0-25-AA-78-6C-D8
+   DNS Servers . . . . . . . . . . . : 147.78.247.47
+                                       119.29.29.29
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Ethernet adapter ������������:
+
+   Media State . . . . . . . . . . . : Media disconnected
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Bluetooth Device (Personal Area Network)
+   Physical Address. . . . . . . . . : A8-E2-91-14-0F-D1
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+
+Ethernet adapter vEthernet (WSL (Hyper-V firewall)):
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Hyper-V Virtual Ethernet Adapter
+   Physical Address. . . . . . . . . : 00-15-5D-4F-F7-C2
+   DHCP Enabled. . . . . . . . . . . : No
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::4c74:90dc:5fa1:b9d1%54(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 172.20.208.1(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   Default Gateway . . . . . . . . . : 
+   DHCPv6 IAID . . . . . . . . . . . : 905975133
+   DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-2F-48-73-48-B0-25-AA-78-6C-D8
+   NetBIOS over Tcpip. . . . . . . . : Enabled
