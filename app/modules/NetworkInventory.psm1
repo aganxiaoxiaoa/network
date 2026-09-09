@@ -944,6 +944,9 @@ function Get-AdapterAdvancedPowerProperties {
     param(
         [string]$AdapterName,
         [array]$Keywords = @(),
+        [array]$AttentionKeywords = @(),
+        [array]$NormalKeywords = @(),
+        [array]$EnumKeywords = @(),
         [string]$LogDir = ""
     )
 
@@ -957,6 +960,9 @@ function Get-AdapterAdvancedPowerProperties {
             AllProperties          = @()
             PowerRelatedCount      = 0
             EnabledCount           = 0
+            AttentionEnabledCount  = 0
+            NormalEnabledCount     = 0
+            EnumCount              = 0
             LogPath                = $null
         }
     }
@@ -973,15 +979,31 @@ function Get-AdapterAdvancedPowerProperties {
             AllProperties          = @()
             PowerRelatedCount      = 0
             EnabledCount           = 0
+            AttentionEnabledCount  = 0
+            NormalEnabledCount     = 0
+            EnumCount              = 0
             LogPath                = $null
         }
     }
+
+    # 配置回退兼容：若未显式提供分类关键字且提供了 Keywords，则将 Keywords 视为 AttentionKeywords
+    $effectiveAttention = if (@($AttentionKeywords).Count -gt 0) {
+        $AttentionKeywords
+    } elseif (@($Keywords).Count -gt 0 -and @($NormalKeywords).Count -eq 0 -and @($EnumKeywords).Count -eq 0) {
+        $Keywords
+    } else {
+        @()
+    }
+    $effectiveNormal = @($NormalKeywords)
+    $effectiveEnum   = @($EnumKeywords)
 
     try {
         $rawProps = @(Get-NetAdapterAdvancedProperty -Name $AdapterName -ErrorAction SilentlyContinue)
         $allPropsList = @()
         $powerPropsList = @()
-        $enabledCount = 0
+        $attentionEnabledCount = 0
+        $normalEnabledCount = 0
+        $enumCount = 0
 
         # 全量遍历所有属性
         foreach ($p in $rawProps) {
@@ -990,37 +1012,92 @@ function Get-AdapterAdvancedPowerProperties {
             $regKey   = if ($p -and $p.PSObject.Properties['RegistryKeyword']) { [string]$p.RegistryKeyword } else { "" }
             $regVal   = if ($p -and $p.PSObject.Properties['RegistryValue']) { [string]$p.RegistryValue } else { "" }
 
-            $propObj = [PSCustomObject]@{
-                DisplayName     = $dispName
-                DisplayValue    = $dispVal
-                RegistryKeyword = $regKey
-                RegistryValue   = $regVal
-                IsPowerRelated  = $false
-                MatchedKeywords = @()
-                IsEnabled       = $false
-            }
-
-            # 关键字匹配 (大小写不敏感子串匹配)
-            $matched = @()
-            foreach ($kw in @($Keywords)) {
+            # 1. 匹配需关注激进省电类
+            $matchedAttention = @()
+            foreach ($kw in $effectiveAttention) {
                 if (-not [string]::IsNullOrWhiteSpace($kw)) {
                     if ($dispName.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
                         $regKey.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
-                        $matched += $kw
+                        $matchedAttention += $kw
                     }
                 }
             }
 
-            if (@($matched).Count -gt 0) {
-                $propObj.IsPowerRelated = $true
-                $propObj.MatchedKeywords = @($matched)
-                # 判定当前是否处于启用/关注状态 (Enabled / 已启用 / 开启 / Active / 1. 最高 等)
-                $isEnabled = ($dispVal -match '已启用|Enabled|开启|Active|^1(\.|$)|Yes|True')
-                $propObj.IsEnabled = $isEnabled
-                if ($isEnabled) { $enabledCount++ }
-                $powerPropsList += $propObj
+            # 2. 匹配正常类睡眠/网络卸载类
+            $matchedNormal = @()
+            foreach ($kw in $effectiveNormal) {
+                if (-not [string]::IsNullOrWhiteSpace($kw)) {
+                    if ($dispName.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
+                        $regKey.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                        $matchedNormal += $kw
+                    }
+                }
             }
 
+            # 3. 匹配多值枚举选择型
+            $matchedEnum = @()
+            foreach ($kw in $effectiveEnum) {
+                if (-not [string]::IsNullOrWhiteSpace($kw)) {
+                    if ($dispName.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
+                        $regKey.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                        $matchedEnum += $kw
+                    }
+                }
+            }
+
+            # 语义化分类与布尔状态判定 (严格移除 ^1(\.|$) 避免将 1. 无首选项 / 1. 最高 误判为启用)
+            $category = "Regular"
+            $isPowerRelated = $false
+            $matchedKeywords = @()
+            $isEnabled = $false
+            $statusText = "[常规属性]"
+
+            if (@($matchedAttention).Count -gt 0) {
+                $category = "Attention"
+                $isPowerRelated = $true
+                $matchedKeywords = $matchedAttention
+                $isEnabled = ($dispVal -match '已启用|Enabled|开启|Active|Yes|True') -and ($dispVal -notmatch '已禁用|Disabled|关闭|No|False')
+                if ($isEnabled) {
+                    $attentionEnabledCount++
+                    $statusText = "[需关注-已开启]"
+                } else {
+                    $statusText = "[需关注-已关闭]"
+                }
+            } elseif (@($matchedNormal).Count -gt 0) {
+                $category = "Normal"
+                $isPowerRelated = $true
+                $matchedKeywords = $matchedNormal
+                $isEnabled = ($dispVal -match '已启用|Enabled|开启|Active|Yes|True') -and ($dispVal -notmatch '已禁用|Disabled|关闭|No|False')
+                if ($isEnabled) {
+                    $normalEnabledCount++
+                    $statusText = "[正常类-已开启]"
+                } else {
+                    $statusText = "[正常类-已关闭]"
+                }
+            } elseif (@($matchedEnum).Count -gt 0) {
+                $category = "Enum"
+                $isPowerRelated = $true
+                $matchedKeywords = $matchedEnum
+                $isEnabled = $false
+                $enumCount++
+                $statusText = "[枚举项]"
+            }
+
+            $propObj = [PSCustomObject]@{
+                DisplayName           = $dispName
+                DisplayValue          = $dispVal
+                RegistryKeyword       = $regKey
+                RegistryValue         = $regVal
+                Category              = $category
+                IsPowerRelated        = $isPowerRelated
+                MatchedKeywords       = @($matchedKeywords)
+                IsEnabled             = $isEnabled
+                StatusText            = $statusText
+            }
+
+            if ($isPowerRelated) {
+                $powerPropsList += $propObj
+            }
             $allPropsList += $propObj
         }
 
@@ -1033,17 +1110,12 @@ function Get-AdapterAdvancedPowerProperties {
             $logLines += "================================================================================"
             $logLines += "网卡高级属性全量枚举日志 (适配器: $AdapterName)"
             $logLines += "采集时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-            $logLines += "总属性数: $(@($allPropsList).Count) | 省电/稳定性匹配项: $(@($powerPropsList).Count) | 处于启用状态项: $enabledCount"
+            $logLines += "总属性数: $(@($allPropsList).Count) | 相关匹配项: $(@($powerPropsList).Count) | 需关注开启: $attentionEnabledCount | 正常类开启: $normalEnabledCount | 枚举项: $enumCount"
             $logLines += "================================================================================"
             $logLines += ("{0,-35} | {1,-18} | {2,-25} | {3}" -f "DisplayName", "DisplayValue", "RegistryKeyword", "分类标记")
             $logLines += ("-" * 95)
             foreach ($item in $allPropsList) {
-                $tag = if ($item.IsPowerRelated) {
-                    if ($item.IsEnabled) { "[省电相关-已开启/关注]" } else { "[省电相关-未开启/已禁用]" }
-                } else {
-                    "[常规属性]"
-                }
-                $logLines += ("{0,-35} | {1,-18} | {2,-25} | {3}" -f $item.DisplayName, $item.DisplayValue, $item.RegistryKeyword, $tag)
+                $logLines += ("{0,-35} | {1,-18} | {2,-25} | {3}" -f $item.DisplayName, $item.DisplayValue, $item.RegistryKeyword, $item.StatusText)
             }
             try {
                 $logLines | Out-File -FilePath $logPath -Encoding UTF8
@@ -1060,7 +1132,10 @@ function Get-AdapterAdvancedPowerProperties {
             PowerRelatedProperties = @($powerPropsList)
             AllProperties          = @($allPropsList)
             PowerRelatedCount      = @($powerPropsList).Count
-            EnabledCount           = $enabledCount
+            EnabledCount           = $attentionEnabledCount + $normalEnabledCount
+            AttentionEnabledCount  = $attentionEnabledCount
+            NormalEnabledCount     = $normalEnabledCount
+            EnumCount              = $enumCount
             LogPath                = $logPath
         }
     } catch {
@@ -1073,6 +1148,9 @@ function Get-AdapterAdvancedPowerProperties {
             AllProperties          = @()
             PowerRelatedCount      = 0
             EnabledCount           = 0
+            AttentionEnabledCount  = 0
+            NormalEnabledCount     = 0
+            EnumCount              = 0
             LogPath                = $null
         }
     }
@@ -1567,10 +1645,203 @@ function Format-SanitizedTimelineText {
     return $res
 }
 
+function Get-ModernStandbySessions {
+    [CmdletBinding()]
+    param(
+        [int]$HoursBack = -1,
+        [string]$LogDir = ""
+    )
+
+    $cfg = Get-ToolConfig
+    $defaultHours = 24
+    if ($null -ne $cfg) {
+        if ($cfg -is [System.Collections.IDictionary] -and $cfg.Contains('TimelineDefaultHoursBack') -and $null -ne $cfg['TimelineDefaultHoursBack']) {
+            $defaultHours = [int]$cfg['TimelineDefaultHoursBack']
+        } elseif ($cfg.PSObject.Properties['TimelineDefaultHoursBack'] -and $null -ne $cfg.TimelineDefaultHoursBack) {
+            $defaultHours = [int]$cfg.TimelineDefaultHoursBack
+        }
+    }
+
+    $effectiveHours = if ($PSBoundParameters.ContainsKey('HoursBack') -and $HoursBack -ge 0) {
+        $HoursBack
+    } else {
+        $defaultHours
+    }
+
+    $now = Get-Date
+    $startTime = if ($effectiveHours -le 0) { $now.AddSeconds(1) } else { $now.AddHours(-$effectiveHours) }
+
+    # 读取 Kernel-Power 事件分类映射 (仅基于本机真实枚举出的 ID: 109, 41, 577, 172, 125, 521)
+    $enterIds = @(109)
+    $exitIds  = @(41, 577)
+    $connIds  = @(172)
+    $auxIds   = @(125, 521)
+
+    if ($null -ne $cfg) {
+        $kpMap = $null
+        if ($cfg -is [System.Collections.IDictionary] -and $cfg.Contains('KernelPowerEventClassifications') -and $null -ne $cfg['KernelPowerEventClassifications']) {
+            $kpMap = $cfg['KernelPowerEventClassifications']
+        } elseif ($cfg.PSObject.Properties['KernelPowerEventClassifications'] -and $null -ne $cfg.KernelPowerEventClassifications) {
+            $kpMap = $cfg.KernelPowerEventClassifications
+        }
+        if ($null -ne $kpMap) {
+            if ($kpMap.Contains('EnterLowPowerEventIds')) { $enterIds = @($kpMap['EnterLowPowerEventIds']) }
+            if ($kpMap.Contains('ExitLowPowerEventIds'))  { $exitIds  = @($kpMap['ExitLowPowerEventIds']) }
+            if ($kpMap.Contains('StandbyConnectivityEventIds')) { $connIds = @($kpMap['StandbyConnectivityEventIds']) }
+            if ($kpMap.Contains('PowerAuxiliaryEventIds')) { $auxIds = @($kpMap['PowerAuxiliaryEventIds']) }
+        }
+    }
+
+    $powerEvents = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $warnings = [System.Collections.Generic.List[string]]::new()
+
+    try {
+        if ($effectiveHours -gt 0) {
+            $rawEvents = @(Get-WinEvent -FilterHashtable @{
+                LogName      = 'System'
+                ProviderName = 'Microsoft-Windows-Kernel-Power'
+                StartTime    = $startTime
+            } -ErrorAction SilentlyContinue)
+
+            foreach ($e in $rawEvents) {
+                $eid = [int]$e.Id
+                $time = $e.TimeCreated
+                $lvl = if ($e.LevelDisplayName) { $e.LevelDisplayName } else { "Information" }
+                $msg = if ($e.Message) { $e.Message } else { "" }
+
+                $class = "Other"
+                $summary = ""
+                if ($enterIds -contains $eid) {
+                    $class = "EnterLowPower"
+                    $summary = "系统进入低功耗状态/睡眠转换 (Kernel-Power $eid)"
+                } elseif ($exitIds -contains $eid) {
+                    $class = "ExitLowPower"
+                    if ($eid -eq 41) {
+                        $summary = "系统从异常关机或掉电中恢复 (Kernel-Power 41)"
+                    } elseif ($eid -eq 577) {
+                        $summary = "系统准备从活动状态重启/恢复完成 (Kernel-Power 577)"
+                    } else {
+                        $summary = "系统退出低功耗状态/唤醒恢复 (Kernel-Power $eid)"
+                    }
+                } elseif ($connIds -contains $eid) {
+                    $class = "Connectivity"
+                    $state = if ($msg -match '(?i)Connected|连通|连接') { "Connected" } elseif ($msg -match '(?i)Disconnected|离线|断开') { "Disconnected" } else { "StateChanged" }
+                    $summary = "现代待机连通性状态变更: $state (Kernel-Power 172)"
+                } elseif ($auxIds -contains $eid) {
+                    $class = "Auxiliary"
+                    if ($eid -eq 125) {
+                        $summary = "温区热度状态更新 (Kernel-Power 125)"
+                    } elseif ($eid -eq 521) {
+                        $summary = "电池充放电状态更新 (Kernel-Power 521)"
+                    } else {
+                        $summary = "硬件与供电辅助状态 (Kernel-Power $eid)"
+                    }
+                } else {
+                    $firstLine = ($msg -split "`r?`n")[0].Trim()
+                    $summary = "Kernel-Power 事件 (ID: $eid): $(if ($firstLine) { $firstLine } else { '无详细信息' })"
+                }
+
+                $powerEvents.Add([PSCustomObject]@{
+                    Timestamp      = $time
+                    TimeCreated    = $time.ToString("yyyy-MM-dd HH:mm:ss")
+                    EventId        = $eid
+                    Level          = $lvl
+                    Classification = $class
+                    Summary        = $summary
+                })
+            }
+        }
+    } catch {
+        $warnings.Add("读取 Kernel-Power 事件异常: $($_.Exception.Message)")
+    }
+
+    # 按时间升序构建待机会话
+    $sortedPower = @($powerEvents | Sort-Object -Property Timestamp)
+    $sessions = [System.Collections.Generic.List[PSCustomObject]]::new()
+    $currentEnter = $null
+
+    foreach ($pe in $sortedPower) {
+        if ($pe.Classification -eq 'EnterLowPower') {
+            $currentEnter = $pe
+        } elseif ($pe.Classification -eq 'ExitLowPower' -and $null -ne $currentEnter) {
+            $durSeconds = [math]::Round(($pe.Timestamp - $currentEnter.Timestamp).TotalSeconds, 1)
+            $sessions.Add([PSCustomObject]@{
+                SessionStart = $currentEnter.Timestamp
+                SessionEnd   = $pe.Timestamp
+                DurationSec  = $durSeconds
+                EnterEvent   = $currentEnter
+                ExitEvent    = $pe
+            })
+            $currentEnter = $null
+        }
+    }
+
+    # 管理员权限下生成 HTML 报告 (powercfg /sleepstudy 与 /systempowerreport)，非管理员优雅跳过
+    $sleepstudyPath = $null
+    $powerreportPath = $null
+    $reportNote = "未生成报告"
+
+    $isAdmin = $false
+    try {
+        $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+        $principal = [Security.Principal.WindowsPrincipal]$identity
+        $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    } catch {
+        $isAdmin = $false
+    }
+
+    if ($isAdmin) {
+        if (-not [string]::IsNullOrWhiteSpace($LogDir) -and (Test-Path $LogDir)) {
+            $ts = (Get-Date).ToString("yyyyMMdd_HHmmss")
+            $ssFile = Join-Path $LogDir "sleepstudy_$ts.html"
+            $prFile = Join-Path $LogDir "powerreport_$ts.html"
+
+            try {
+                & powercfg.exe /sleepstudy /output "$ssFile" *>$null
+                if ((Test-Path -LiteralPath $ssFile)) {
+                    $sleepstudyPath = $ssFile
+                }
+            } catch {
+                $warnings.Add("生成 sleepstudy 报告异常: $($_.Exception.Message)")
+            }
+
+            try {
+                & powercfg.exe /systempowerreport /output "$prFile" *>$null
+                if ((Test-Path -LiteralPath $prFile)) {
+                    $powerreportPath = $prFile
+                }
+            } catch {
+                $warnings.Add("生成 systempowerreport 报告异常: $($_.Exception.Message)")
+            }
+
+            $reportNote = "已在管理员权限下生成诊断报告"
+        } else {
+            $reportNote = "未提供有效日志存储目录，跳过报告生成"
+        }
+    } else {
+        $reportNote = "当前为非管理员会话，跳过生成 HTML 诊断报告 (需管理员权限运行)"
+    }
+
+    return [PSCustomObject]@{
+        HoursBack            = $effectiveHours
+        StartTime            = $startTime.ToString("yyyy-MM-dd HH:mm:ss")
+        TotalPowerEvents     = @($sortedPower).Count
+        PowerEvents          = @($sortedPower)
+        TotalSessions        = @($sessions).Count
+        Sessions             = @($sessions)
+        IsAdmin              = $isAdmin
+        SleepStudyReportPath = $sleepstudyPath
+        PowerReportPath      = $powerreportPath
+        ReportGenerationNote = $reportNote
+        Warnings             = @($warnings)
+    }
+}
+
 function Get-NetworkEventTimeline {
     [CmdletBinding()]
     param(
-        [int]$HoursBack = -1
+        [int]$HoursBack = -1,
+        [string]$LogDir = ""
     )
 
     $cfg = Get-ToolConfig
@@ -1818,6 +2089,121 @@ function Get-NetworkEventTimeline {
         }
     }
 
+    # --------------------------------------------------------------------------
+    # 4. 来源四：现代待机会话与电源事件 (Kernel-Power 与 powercfg 关联)
+    # --------------------------------------------------------------------------
+    $standbyData = $null
+    $standbyCorrelation = $null
+    try {
+        $standbyData = Get-ModernStandbySessions -HoursBack $effectiveHours -LogDir $LogDir
+        if ($standbyData -and @($standbyData.PowerEvents).Count -gt 0) {
+            foreach ($pe in $standbyData.PowerEvents) {
+                $allRecords.Add([PSCustomObject]@{
+                    Timestamp   = $pe.Timestamp
+                    TimeCreated = $pe.TimeCreated
+                    Source      = "Power"
+                    EventId     = $pe.EventId
+                    Level       = $pe.Level
+                    Summary     = (Format-SanitizedTimelineText -Text $pe.Summary)
+                })
+            }
+        }
+        if ($standbyData -and @($standbyData.Warnings).Count -gt 0) {
+            foreach ($sw in $standbyData.Warnings) {
+                $warnings.Add($sw)
+            }
+        }
+
+        # 关联分析判定：计算 WLAN 断开事件与待机会话的时间关系
+        $wakeGraceSec = 30
+        $proximitySec = 60
+        if ($null -ne $cfg) {
+            if ($cfg -is [System.Collections.IDictionary]) {
+                if ($cfg.Contains('StandbyWakeGracePeriodSeconds') -and $null -ne $cfg['StandbyWakeGracePeriodSeconds']) {
+                    $wakeGraceSec = [int]$cfg['StandbyWakeGracePeriodSeconds']
+                }
+                if ($cfg.Contains('StandbySessionProximitySeconds') -and $null -ne $cfg['StandbySessionProximitySeconds']) {
+                    $proximitySec = [int]$cfg['StandbySessionProximitySeconds']
+                }
+            } elseif ($cfg.PSObject.Properties['StandbyWakeGracePeriodSeconds'] -and $null -ne $cfg.StandbyWakeGracePeriodSeconds) {
+                $wakeGraceSec = [int]$cfg.StandbyWakeGracePeriodSeconds
+                if ($cfg.PSObject.Properties['StandbySessionProximitySeconds'] -and $null -ne $cfg.StandbySessionProximitySeconds) {
+                    $proximitySec = [int]$cfg.StandbySessionProximitySeconds
+                }
+            }
+        }
+
+        $inSessionCount = 0
+        $postWakeCount = 0
+        $preSleepCount = 0
+        $awakeCount = 0
+
+        $exitTimes = @()
+        $enterTimes = @()
+        if ($standbyData -and @($standbyData.PowerEvents).Count -gt 0) {
+            $exitTimes = @($standbyData.PowerEvents | Where-Object { $_.Classification -eq 'ExitLowPower' } | ForEach-Object { $_.Timestamp })
+            $enterTimes = @($standbyData.PowerEvents | Where-Object { $_.Classification -eq 'EnterLowPower' } | ForEach-Object { $_.Timestamp })
+        }
+
+        $wlanDisconnectRecords = @($allRecords | Where-Object { $_.Source -eq 'WLAN' -and $disconnectIds -contains $_.EventId })
+
+        foreach ($rec in $wlanDisconnectRecords) {
+            $tDisc = $rec.Timestamp
+            $matched = $false
+
+            # 判定是否处于会话期内
+            if ($standbyData -and @($standbyData.Sessions).Count -gt 0) {
+                foreach ($s in $standbyData.Sessions) {
+                    if ($tDisc -ge $s.SessionStart -and $tDisc -le $s.SessionEnd) {
+                        $inSessionCount++
+                        $matched = $true
+                        break
+                    }
+                }
+            }
+            if ($matched) { continue }
+
+            # 判定是否在退出唤醒后 N 秒内
+            foreach ($tEx in $exitTimes) {
+                $diff = ($tDisc - $tEx).TotalSeconds
+                if ($diff -ge 0 -and $diff -le $wakeGraceSec) {
+                    $postWakeCount++
+                    $matched = $true
+                    break
+                }
+            }
+            if ($matched) { continue }
+
+            # 判定是否在进入低功耗前夕 N 秒内
+            foreach ($tEn in $enterTimes) {
+                $diff = ($tEn - $tDisc).TotalSeconds
+                if ($diff -ge 0 -and $diff -le $proximitySec) {
+                    $preSleepCount++
+                    $matched = $true
+                    break
+                }
+            }
+            if ($matched) { continue }
+
+            $awakeCount++
+        }
+
+        $standbyCorrelation = [PSCustomObject]@{
+            TotalDisconnects           = $disconnectCounts
+            InSessionDisconnects       = $inSessionCount
+            PostWakeDisconnects        = $postWakeCount
+            PreSleepDisconnects        = $preSleepCount
+            AwakeDisconnects           = $awakeCount
+            TotalSessions              = if ($standbyData) { $standbyData.TotalSessions } else { 0 }
+            TotalPowerEvents           = if ($standbyData) { $standbyData.TotalPowerEvents } else { 0 }
+            WakeGracePeriodSeconds     = $wakeGraceSec
+            ProximitySeconds           = $proximitySec
+            Disclaimer                 = "以上仅为时间相关性，不构成因果结论。"
+        }
+    } catch {
+        $warnings.Add("现代待机与电源关联分析异常: $($_.Exception.Message)")
+    }
+
     # 按时间戳升序排序
     $sorted = @($allRecords | Sort-Object -Property Timestamp)
 
@@ -1833,6 +2219,8 @@ function Get-NetworkEventTimeline {
         WatchdogActionCount        = $watchdogActionCounts
         WatchdogActions            = @($watchdogActions)
         OtherEventCounts           = $otherEventCounts
+        ModernStandby              = $standbyData
+        StandbyCorrelation         = $standbyCorrelation
         Warnings                   = @($warnings)
         Disclaimer                 = "以上仅为时间相关性，不构成因果结论。"
     }
@@ -1855,5 +2243,6 @@ Export-ModuleMember -Function @(
     'Get-NetworkServiceStatus',
     'Get-WlanDiagnostics',
     'Get-LocalWatchdogStatus',
-    'Get-NetworkEventTimeline'
+    'Get-NetworkEventTimeline',
+    'Get-ModernStandbySessions'
 )

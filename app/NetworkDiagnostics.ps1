@@ -136,20 +136,26 @@ function Invoke-RunDiagnosis {
         # 只读读取网卡高级属性省电与稳定性开关 (子节 4.2)
         Write-Host "   [子节 4.2: 网卡高级属性省电与稳定性开关]" -ForegroundColor Gray
         $logDir = Join-Path $ToolRoot "logs"
-        $kwList = if ($cfg.ContainsKey('PowerSaveKeywords')) { $cfg['PowerSaveKeywords'] } else { @() }
-        $advProps = Get-AdapterAdvancedPowerProperties -AdapterName $nic.Name -Keywords $kwList -LogDir $logDir
+        $attnKw = if ($cfg.ContainsKey('PowerSaveAttentionKeywords')) { $cfg['PowerSaveAttentionKeywords'] } else { @() }
+        $normKw = if ($cfg.ContainsKey('PowerSaveNormalKeywords')) { $cfg['PowerSaveNormalKeywords'] } else { @() }
+        $enumKw = if ($cfg.ContainsKey('PowerSaveEnumKeywords')) { $cfg['PowerSaveEnumKeywords'] } else { @() }
+        $advProps = Get-AdapterAdvancedPowerProperties -AdapterName $nic.Name -AttentionKeywords $attnKw -NormalKeywords $normKw -EnumKeywords $enumKw -LogDir $logDir
         if ($advProps.Found) {
             $logFileName = if ($advProps.LogPath) { [System.IO.Path]::GetFileName($advProps.LogPath) } else { "logs 目录" }
             Write-Host "   - 高级属性全量枚举: 共 $($advProps.TotalPropertiesCount) 项 (全量明细已记录至 $logFileName)" -ForegroundColor Gray
-            Write-Host "   - 省电/连接稳定性项: 匹配到 $($advProps.PowerRelatedCount) 项 (其中 $($advProps.EnabledCount) 项处于启用/关注状态):" -ForegroundColor Gray
+            Write-Host "   - 属性语义分类统计: 匹配到 $($advProps.PowerRelatedCount) 项相关配置 (需关注且开启: $($advProps.AttentionEnabledCount) 项 | 正常类开启: $($advProps.NormalEnabledCount) 项 | 枚举选择型: $($advProps.EnumCount) 项):" -ForegroundColor Gray
             
             foreach ($prop in $advProps.PowerRelatedProperties) {
-                $statusColor = if ($prop.IsEnabled) { [ConsoleColor]::Yellow } else { [ConsoleColor]::Green }
-                $flagText = if ($prop.IsEnabled) { "[启用/关注]" } else { "[已关闭/已禁用]" }
-                Write-Host ("     * {0,-26} | 当前值: {1,-12} {2} (Key: {3})" -f $prop.DisplayName, $prop.DisplayValue, $flagText, $prop.RegistryKeyword) -ForegroundColor $statusColor
+                $statusColor = switch ($prop.Category) {
+                    'Attention' { if ($prop.IsEnabled) { [ConsoleColor]::Red } else { [ConsoleColor]::Green } }
+                    'Normal'    { if ($prop.IsEnabled) { [ConsoleColor]::Green } else { [ConsoleColor]::Gray } }
+                    'Enum'      { [ConsoleColor]::Cyan }
+                    default     { [ConsoleColor]::Gray }
+                }
+                Write-Host ("     * {0,-26} | 当前值: {1,-12} {2} (Key: {3})" -f $prop.DisplayName, $prop.DisplayValue, $prop.StatusText, $prop.RegistryKeyword) -ForegroundColor $statusColor
             }
 
-            Write-Host "   - 汇总结论: 检测到 $($advProps.PowerRelatedCount) 项省电与稳定性相关属性，其中 $($advProps.EnabledCount) 项当前处于启用状态。" -ForegroundColor Cyan
+            Write-Host "   - 汇总结论: 需关注且开启: $($advProps.AttentionEnabledCount) 项 | 正常类开启: $($advProps.NormalEnabledCount) 项 | 枚举选择型: $($advProps.EnumCount) 项。" -ForegroundColor Cyan
             Write-Host "   - [排查与调整指引] 若遇到 Wi-Fi 睡眠断流或漫游掉线，可手动打开: 设备管理器 → 网络适配器 → $($nic.Name) → 属性 → 高级。本工具遵循只读原则，绝不自动修改任何省电设置，需要用户手动调整。" -ForegroundColor Yellow
         } else {
             Write-Host "   - 高级属性查询提示: $($advProps.Error)" -ForegroundColor Yellow
@@ -302,10 +308,16 @@ function Invoke-RunTimelineAnalysis {
     Write-Host "                正在执行断网时间线关联分析...                          " -ForegroundColor Cyan
     Write-Host "=======================================================================" -ForegroundColor Cyan
 
+    $logsDir = Join-Path $ToolRoot "logs"
+    if (-not (Test-Path -LiteralPath $logsDir)) {
+        New-Item -Path $logsDir -ItemType Directory -Force | Out-Null
+    }
+
     $fwd = @{}
     if ($PSBoundParameters.ContainsKey('Hours') -and $Hours -ge 0) {
         $fwd['HoursBack'] = $Hours
     }
+    $fwd['LogDir'] = $logsDir
     $timeline = Get-NetworkEventTimeline @fwd
 
     Write-Host "`n[时间线汇总统计]" -ForegroundColor Yellow
@@ -318,6 +330,35 @@ function Invoke-RunTimelineAnalysis {
     Write-Host "   - 看门狗动作执行次数: $($timeline.WatchdogActionCount) 次"
     if (@($timeline.WatchdogActions).Count -gt 0) {
         Write-Host "   - 执行过的看门狗动作列表: $(@($timeline.WatchdogActions | Select-Object -Unique) -join '; ')"
+    }
+
+    # 现代待机与电源事件关联分析结果展示
+    if ($timeline.PSObject.Properties['StandbyCorrelation'] -and $timeline.StandbyCorrelation) {
+        $corr = $timeline.StandbyCorrelation
+        Write-Host "   - 现代待机/电源事件关联分析:" -ForegroundColor Cyan
+        Write-Host "     * 捕获电源事件总数: $($corr.TotalPowerEvents) 条 | 待机/转换会话: $($corr.TotalSessions) 次"
+        Write-Host "     * 断开事件分布: 会话期内: $($corr.InSessionDisconnects) 次 | 唤醒后 $($corr.WakeGracePeriodSeconds)s 内: $($corr.PostWakeDisconnects) 次 | 进入睡眠前 $($corr.ProximitySeconds)s 内: $($corr.PreSleepDisconnects) 次 | 完全清醒期: $($corr.AwakeDisconnects) 次"
+        if ($corr.TotalDisconnects -gt 0) {
+            if ($corr.InSessionDisconnects -gt 0 -or $corr.PostWakeDisconnects -gt 0) {
+                Write-Host "     * 关联判定: 存在与睡眠/唤醒窗口高度吻合的断网事件，建议排查网卡睡眠唤醒状态与 GTK Rekey 协商。" -ForegroundColor Yellow
+            } else {
+                Write-Host "     * 关联判定: 所有断网事件均发生在系统清醒活动状态下，未发现与电源待机转换直接相关。" -ForegroundColor Green
+            }
+        } else {
+            Write-Host "     * 关联判定: 分析窗口内未检测到 WLAN 断开事件。" -ForegroundColor Green
+        }
+    }
+    if ($timeline.PSObject.Properties['ModernStandby'] -and $timeline.ModernStandby) {
+        $ms = $timeline.ModernStandby
+        if ($ms.SleepStudyReportPath) {
+            Write-Host "     * 现代待机诊断报告 (SleepStudy): $([System.IO.Path]::GetFileName($ms.SleepStudyReportPath))" -ForegroundColor Gray
+        }
+        if ($ms.PowerReportPath) {
+            Write-Host "     * 系统电源诊断报告 (PowerReport): $([System.IO.Path]::GetFileName($ms.PowerReportPath))" -ForegroundColor Gray
+        }
+        if (-not $ms.IsAdmin) {
+            Write-Host "     * 诊断报告提示: $($ms.ReportGenerationNote)" -ForegroundColor Gray
+        }
     }
 
     if ($timeline.OtherEventCounts.Keys.Count -gt 0) {
@@ -335,10 +376,6 @@ function Invoke-RunTimelineAnalysis {
     }
 
     # 完整时序表写入 logs\ 目录 (带时间戳)
-    $logsDir = Join-Path $ToolRoot "logs"
-    if (-not (Test-Path -LiteralPath $logsDir)) {
-        New-Item -Path $logsDir -ItemType Directory -Force | Out-Null
-    }
     $tsStr = (Get-Date).ToString("yyyyMMdd_HHmmss")
     $logFile = Join-Path $logsDir "timeline_$tsStr.log"
 
@@ -374,6 +411,7 @@ function Invoke-RunTimelineAnalysis {
             $srcColor = switch ($r.Source) {
                 'WLAN'     { [ConsoleColor]::Magenta }
                 'System'   { [ConsoleColor]::Cyan }
+                'Power'    { [ConsoleColor]::DarkYellow }
                 'Watchdog' { [ConsoleColor]::Yellow }
                 default    { [ConsoleColor]::White }
             }

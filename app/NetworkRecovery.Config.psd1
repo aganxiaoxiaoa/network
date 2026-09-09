@@ -105,24 +105,59 @@
     )
 
     # --------------------------------------------------------------------------
-    # 网卡高级属性省电与现代待机配置
+    # 网卡高级属性分类与现代待机配置 (语义化分类，避免枚举误报)
     # --------------------------------------------------------------------------
 
-    # 网卡高级属性省电与连接稳定性关键字过滤表 (大小写不敏感子串匹配，用于高亮分类)
-    PowerSaveKeywords = @(
+    # 需关注类关键字清单 (布尔开关：开启可能影响连接稳定性/微睡眠掉线的激进省电项)
+    PowerSaveAttentionKeywords = @(
         "U-APSD", "UAPSD", "APSD",
         "MIMO Power Save", "MIMO 省电",
-        "Power Save", "Power Saving", "省电", "节能",
-        "Roaming Aggressiveness", "Roaming Sensitivity", "漫游",
-        "Preferred Band", "Band Preference", "频段", "频带",
+        "Power Save", "Power Saving", "省电", "节能", "LowPowerEnable",
+        "Selective Suspend", "选择性挂起"
+    )
+
+    # 正常类关键字清单 (布尔开关：现代待机机型上开启属预期行为/睡眠唤醒与网络卸载项)
+    PowerSaveNormalKeywords = @(
+        "ARP Offload", "NS Offload", "DisableARPOffload",
+        "GTK Rekey", "DisableGTKRekey",
+        "唤醒幻数据包", "DisableWakeOnMagic",
+        "唤醒模式匹配", "DisableWakeOnPattern",
+        "Sleep on WoWLAN", "WoWLAN", "Packet Coalescing", "数据包合并"
+    )
+
+    # 枚举选择型关键字清单 (非布尔开关：多值枚举配置，不判启用禁用，只作选项标记)
+    PowerSaveEnumKeywords = @(
+        "Roaming Aggressiveness", "Roaming Sensitivity", "漫游", "RoamIndicateTh",
+        "Preferred Band", "Band Preference", "频段", "频带", "PreferredBand",
         "Throughput Booster", "Throughput Enhancement", "吞吐",
-        "Transmit Power", "传输功率", "发射功率",
-        "Selective Suspend", "选择性挂起",
-        "Packet Coalescing", "数据包合并",
-        "ARP Offload", "NS Offload", "卸载",
-        "Sleep on WoWLAN", "WoWLAN", "唤醒"
+        "Transmit Power", "传输功率", "发射功率", "TxPowerLevel"
     )
 
     # 是否在控制台显示未命中关键字的全部高级属性 (默认 False，全量属性始终完整写入 logs\)
     ShowAllAdvancedProperties = $false
+
+    # --------------------------------------------------------------------------
+    # 现代待机会话与电源事件关联分析配置 (仅基于本机真实枚举出的 Kernel-Power 事件 ID)
+    # --------------------------------------------------------------------------
+
+    # Kernel-Power 事件分类映射表 (严禁配置枚举中不存在的 ID)
+    KernelPowerEventClassifications = @{
+        # 进入低功耗/待机/关机转换事件 ID (Event 109)
+        EnterLowPowerEventIds = @(109)
+
+        # 退出低功耗/唤醒/重启恢复事件 ID (Event 41, 577)
+        ExitLowPowerEventIds  = @(41, 577)
+
+        # 现代待机连通性状态变更事件 ID (Event 172: Disconnected 离线 / Connected 连通)
+        StandbyConnectivityEventIds = @(172)
+
+        # 供电与硬件辅助状态事件 ID (Event 125 温区枚举 / Event 521 电池状态)
+        PowerAuxiliaryEventIds = @(125, 521)
+    }
+
+    # 现代待机退出唤醒容限时间 (秒，退出低功耗后在此时间窗口内的断网判定为唤醒关联断网)
+    StandbyWakeGracePeriodSeconds = 30
+
+    # 现代待机会话临近容限时间 (秒)
+    StandbySessionProximitySeconds = 60
 }
