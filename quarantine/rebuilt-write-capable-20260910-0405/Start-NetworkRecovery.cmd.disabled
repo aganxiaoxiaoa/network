@@ -1,0 +1,8 @@
+@echo off
+setlocal
+cd /d "%~dp0"
+echo =======================================================================
+echo   Starting Windows 10/11 Network Diagnostic and Recovery Toolkit (USB)
+echo =======================================================================
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0NetworkRecovery.ps1" -Action Menu
+exit /b %ERRORLEVEL%

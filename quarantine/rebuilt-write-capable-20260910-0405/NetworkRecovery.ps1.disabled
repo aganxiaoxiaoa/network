@@ -1,0 +1,193 @@
+﻿#Requires -Version 5.1
+# ==============================================================================
+# NetworkRecovery.ps1
+# Windows 10/11 便携网络诊断与急救工具箱 (完全驻留于 U 盘独立版)
+# ==============================================================================
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [ValidateSet('Diagnose', 'SafeRepair', 'ReconnectNic', 'DeepReset', 'ResetProxy', 'RestoreProxy', 'ExportDrivers', 'Bundle', 'Menu')]
+    [string]$Action = 'Menu',
+    [switch]$Force,
+    [switch]$IncludeSensitiveNetworkData,
+    [string]$ConfirmationToken
+)
+
+$ErrorActionPreference = 'Stop'
+Set-StrictMode -Version 2.0
+
+$ToolRoot = $PSScriptRoot
+$ModulesDir = Join-Path $ToolRoot "modules"
+
+# 动态载入模块
+Import-Module (Join-Path $ModulesDir "NetworkDiagnostics.psm1") -Force
+Import-Module (Join-Path $ModulesDir "RecoveryActions.psm1") -Force
+Import-Module (Join-Path $ModulesDir "RecoveryArtifacts.psm1") -Force
+
+function Test-IsAdmin {
+    $currentIdentity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
+    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+}
+
+function Invoke-ElevatedSelf {
+    param(
+        [string]$TargetAction
+    )
+    $argList = @(
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "`"$PSCommandPath`"",
+        "-Action", $TargetAction
+    )
+    if ($Force) { $argList += "-Force" }
+    if ($IncludeSensitiveNetworkData) { $argList += "-IncludeSensitiveNetworkData" }
+    if ($PSBoundParameters.ContainsKey('WhatIf')) { $argList += "-WhatIf" }
+    if (-not [string]::IsNullOrEmpty($ConfirmationToken)) { $argList += "-ConfirmationToken `"$ConfirmationToken`"" }
+
+    Write-Host "[UAC] 正在以管理员权限启动子进程以执行: $TargetAction..." -ForegroundColor Yellow
+    $p = Start-Process -FilePath "powershell.exe" -ArgumentList ($argList -join ' ') -Verb RunAs -PassThru -Wait
+    return $p.ExitCode
+}
+
+# -----------------------------------------------------------------------------
+# 构造 WhatIf / Confirm 透传参数
+# -----------------------------------------------------------------------------
+$actionForward = @{}
+if ($PSBoundParameters.ContainsKey('WhatIf')) {
+    $actionForward['WhatIf'] = $WhatIfPreference
+}
+if ($PSBoundParameters.ContainsKey('Confirm')) {
+    $actionForward['Confirm'] = $ConfirmPreference
+}
+
+# -----------------------------------------------------------------------------
+# 执行对应 Action
+# -----------------------------------------------------------------------------
+switch ($Action) {
+    'Diagnose' {
+        Invoke-FullDiagnostic
+    }
+
+    'SafeRepair' {
+        Invoke-SafeRepair -ToolRoot $ToolRoot @actionForward
+    }
+
+    'ReconnectNic' {
+        if (-not (Test-IsAdmin)) {
+            $code = Invoke-ElevatedSelf -TargetAction 'ReconnectNic'
+            exit $code
+        }
+        $diag = Invoke-FullDiagnostic
+        if ($diag.Adapter -and $diag.Adapter.Found) {
+            Invoke-ReconnectAdapter -InterfaceIndex $diag.Adapter.InterfaceIndex `
+                                   -ExpectedGuid $diag.Adapter.InterfaceGuid `
+                                   -ConfirmationToken $ConfirmationToken `
+                                   -Force:$Force `
+                                   @actionForward
+        } else {
+            Write-Host "[错误] 诊断未识别到可重连的活动物理网卡。" -ForegroundColor Red
+        }
+    }
+
+    'DeepReset' {
+        if (-not (Test-IsAdmin)) {
+            $code = Invoke-ElevatedSelf -TargetAction 'DeepReset'
+            exit $code
+        }
+        Invoke-DeepReset -ToolRoot $ToolRoot -ConfirmationToken $ConfirmationToken -Force:$Force @actionForward
+    }
+
+    'ResetProxy' {
+        Invoke-ResetProxyToDirect -ToolRoot $ToolRoot -ConfirmationToken $ConfirmationToken -Force:$Force @actionForward
+    }
+
+    'RestoreProxy' {
+        Restore-ProxyFromSnapshot -ToolRoot $ToolRoot -ConfirmationToken $ConfirmationToken -Force:$Force @actionForward
+    }
+
+    'ExportDrivers' {
+        if (-not (Test-IsAdmin)) {
+            $code = Invoke-ElevatedSelf -TargetAction 'ExportDrivers'
+            exit $code
+        }
+        Export-NetworkDrivers -ToolRoot $ToolRoot @actionForward
+    }
+
+    'Bundle' {
+        New-DiagnosticBundle -ToolRoot $ToolRoot -IncludeWlanReport:$IncludeSensitiveNetworkData @actionForward
+    }
+
+    'Menu' {
+        while ($true) {
+            Clear-Host
+            Write-Host "=======================================================================" -ForegroundColor Cyan
+            Write-Host "          Windows 10/11 便携网络急救与诊断工具箱 (USB 独立版)          " -ForegroundColor Cyan
+            Write-Host "=======================================================================" -ForegroundColor Cyan
+            Write-Host " 当前运行位置: $ToolRoot" -ForegroundColor Gray
+            $adminColor = if (Test-IsAdmin) { [ConsoleColor]::Green } else { [ConsoleColor]::Yellow }
+            $adminText  = if (Test-IsAdmin) { '是 [Administrator]' } else { '否 [Standard User]' }
+            Write-Host " 管理员权限  : $adminText`n" -ForegroundColor $adminColor
+            Write-Host "   [1] 只读网络诊断 (分层健康检测 / 路由 / DNS / 代理 / WLAN / IPv6)" -ForegroundColor White
+            Write-Host "   [2] 安全修复：刷新 DNS，按条件续租 DHCP (物理网卡 / 跳过静态IP)" -ForegroundColor White
+            Write-Host "   [3] 重连诊断确认的活动物理网卡 (高风险: 需管理员权限与精确确认)" -ForegroundColor Yellow
+            Write-Host "   [4] 深度重置 Winsock / TCP-IP 协议栈 (最终手段: 静态IP安全阻断)" -ForegroundColor Magenta
+            Write-Host "   [5] 清除当前用户 WinINET 手动代理/PAC，恢复直连 (自动备份快照)" -ForegroundColor White
+            Write-Host "   [6] 从代理快照精确恢复 WinINET 配置" -ForegroundColor White
+            Write-Host "   [7] 导出第三方网络驱动到 U 盘 (PnPUtil 备份 / 导出清单)" -ForegroundColor White
+            Write-Host "   [8] 生成诊断报告压缩包 (脱敏打包 / 隐私可控)" -ForegroundColor White
+            Write-Host "   [0] 退出工具箱" -ForegroundColor Gray
+            Write-Host "=======================================================================" -ForegroundColor Cyan
+            Write-Host "请输入选项数字 [0-8]: " -ForegroundColor Yellow -NoNewline
+            $choice = Read-Host
+
+            switch ($choice.Trim()) {
+                '1' { Invoke-FullDiagnostic; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }
+                '2' { Invoke-SafeRepair -ToolRoot $ToolRoot; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }
+                '3' {
+                    if (-not (Test-IsAdmin)) {
+                        Invoke-ElevatedSelf -TargetAction 'ReconnectNic'
+                    } else {
+                        $diag = Invoke-FullDiagnostic
+                        if ($diag.Adapter -and $diag.Adapter.Found) {
+                            Invoke-ReconnectAdapter -InterfaceIndex $diag.Adapter.InterfaceIndex -ExpectedGuid $diag.Adapter.InterfaceGuid
+                        } else {
+                            Write-Host "[错误] 诊断未识别到可重连的活动物理网卡。" -ForegroundColor Red
+                        }
+                    }
+                    Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                }
+                '4' {
+                    if (-not (Test-IsAdmin)) {
+                        Invoke-ElevatedSelf -TargetAction 'DeepReset'
+                    } else {
+                        Invoke-DeepReset -ToolRoot $ToolRoot
+                    }
+                    Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                }
+                '5' { Invoke-ResetProxyToDirect -ToolRoot $ToolRoot; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }
+                '6' { Restore-ProxyFromSnapshot -ToolRoot $ToolRoot; Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null }
+                '7' {
+                    if (-not (Test-IsAdmin)) {
+                        Invoke-ElevatedSelf -TargetAction 'ExportDrivers'
+                    } else {
+                        Export-NetworkDrivers -ToolRoot $ToolRoot
+                    }
+                    Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                }
+                '8' {
+                    Write-Host "是否在诊断包中包含完整 WLAN 报告？(可能包含历史 SSID 与硬件 MAC) [y/N]: " -ForegroundColor Yellow -NoNewline
+                    $wlanChoice = Read-Host
+                    $incWlan = ($wlanChoice.Trim() -eq 'y' -or $wlanChoice.Trim() -eq 'Y')
+                    New-DiagnosticBundle -ToolRoot $ToolRoot -IncludeWlanReport:$incWlan
+                    Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                }
+                '0' { break }
+                default {
+                    Write-Host "无效选项，请重新输入。" -ForegroundColor Red
+                    Start-Sleep -Seconds 1
+                }
+            }
+        }
+    }
+}
