@@ -139,6 +139,9 @@ function Invoke-RunDiagnosis {
         Write-Host "   - 链路质量评估: $($wlanQuality.Note)" -ForegroundColor Gray
     } else {
         Write-Host "   - 状态/说明: $($wlanQuality.Note)" -ForegroundColor Gray
+        if ($wlanQuality.State -eq 'AccessDenied') {
+            Write-Host "     [操作指引] 若需获取完整无线指标 (RSSI/信道/速率)，请手动打开: 设置 → 隐私和安全性 → 位置，开启位置权限后重试。本工具遵循只读原则，绝不自动更改系统隐私设置。" -ForegroundColor Yellow
+        }
     }
 
     # 6. IP 配置与 DHCP 租约详细信息 (新增能力 4 + Bug 2 修复)
