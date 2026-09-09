@@ -1,0 +1,46 @@
+=== 35 禁令关键字扫描报告 ===
+时间: 2026-09-10 04:05
+扫描文件数: 6
+命中总数: 25
+命中文件数: 2
+
+=== 命中关键字统计 ===
+  Set-ItemProperty: 4 次
+  ipconfig /flushdns: 3 次
+  netsh int ip reset: 3 次
+  Remove-ItemProperty: 3 次
+  Disable-NetAdapter: 2 次
+  netcfg -d: 2 次
+  netsh winsock reset: 2 次
+  key=clear: 2 次
+  ipconfig /renew: 1 次
+  Enable-NetAdapter: 1 次
+  netsh winhttp reset proxy: 1 次
+  pnputil /add-driver: 1 次
+
+=== 命中明细记录 ===
+[RecoveryActions.psm1:6] [关键字: Disable-NetAdapter] #  2. 严禁使用不存在的参数 (如 Disable-NetAdapter -InterfaceIndex)
+[RecoveryActions.psm1:7] [关键字: netcfg -d] #  3. 严禁执行 netcfg -d
+[RecoveryActions.psm1:82] [关键字: ipconfig /flushdns] $flushRes = (ipconfig /flushdns 2>&1) -join "`n"
+[RecoveryActions.psm1:102] [关键字: ipconfig /renew] $renewRes = (ipconfig /renew $nic.Name 2>&1) -join "`n"
+[RecoveryActions.psm1:180] [关键字: Disable-NetAdapter] $nic | Disable-NetAdapter -Confirm:$false -ErrorAction Stop
+[RecoveryActions.psm1:186] [关键字: Enable-NetAdapter] $currentNic | Enable-NetAdapter -Confirm:$false -ErrorAction Stop
+[RecoveryActions.psm1:212] [关键字: netsh int ip reset] Write-Host "`n深度重置 (netsh int ip reset) 会彻底抹除静态 IP 与网关配置，可能导致机器离线。" -ForegroundColor Red
+[RecoveryActions.psm1:218] [关键字: ipconfig /flushdns] if (-not $PSCmdlet.ShouldProcess("系统 TCP/IP 与 Winsock 协议栈", "执行 netsh winsock reset, netsh int ip reset, ipconfig /flushdns")) {
+[RecoveryActions.psm1:218] [关键字: netsh winsock reset] if (-not $PSCmdlet.ShouldProcess("系统 TCP/IP 与 Winsock 协议栈", "执行 netsh winsock reset, netsh int ip reset, ipconfig /flushdns")) {
+[RecoveryActions.psm1:218] [关键字: netsh int ip reset] if (-not $PSCmdlet.ShouldProcess("系统 TCP/IP 与 Winsock 协议栈", "执行 netsh winsock reset, netsh int ip reset, ipconfig /flushdns")) {
+[RecoveryActions.psm1:226] [关键字: netcfg -d] Write-Host "本工具绝不执行破坏性的 netcfg -d (netcfg -d 会破坏 VPN/虚拟交换机组件)。" -ForegroundColor Gray
+[RecoveryActions.psm1:244] [关键字: netsh winsock reset] netsh winsock reset | Out-Null
+[RecoveryActions.psm1:248] [关键字: netsh int ip reset] netsh int ip reset | Out-Null
+[RecoveryActions.psm1:252] [关键字: ipconfig /flushdns] ipconfig /flushdns | Out-Null
+[RecoveryActions.psm1:316] [关键字: netsh winhttp reset proxy] Write-Host "`n [安全承诺] 仅修改当前用户 WinINET 注册表，绝对不执行 netsh winhttp reset proxy。" -ForegroundColor Gray
+[RecoveryActions.psm1:358] [关键字: Set-ItemProperty] Set-ItemProperty -Path $regPath -Name ProxyEnable -Value 0 -Type DWord -Force
+[RecoveryActions.psm1:359] [关键字: Remove-ItemProperty] if ($props.PSObject.Properties['ProxyServer']) { Remove-ItemProperty -Path $regPath -Name ProxyServer -Force -ErrorAction SilentlyContinue }
+[RecoveryActions.psm1:360] [关键字: Remove-ItemProperty] if ($props.PSObject.Properties['AutoConfigURL']) { Remove-ItemProperty -Path $regPath -Name AutoConfigURL -Force -ErrorAction SilentlyContinue }
+[RecoveryActions.psm1:361] [关键字: Set-ItemProperty] Set-ItemProperty -Path $regPath -Name AutoDetect -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+[RecoveryActions.psm1:444] [关键字: Set-ItemProperty] Set-ItemProperty -Path $regPath -Name $name -Value ([int]$val) -Type DWord -Force
+[RecoveryActions.psm1:446] [关键字: Set-ItemProperty] Set-ItemProperty -Path $regPath -Name $name -Value ([string]$val) -Type String -Force
+[RecoveryActions.psm1:450] [关键字: Remove-ItemProperty] Remove-ItemProperty -Path $regPath -Name $name -Force -ErrorAction SilentlyContinue
+[RecoveryArtifacts.psm1:6] [关键字: key=clear] #  2. 严禁导出 Wi-Fi 明文密码 (绝不使用 key=clear)
+[RecoveryArtifacts.psm1:100] [关键字: pnputil /add-driver] Write-Host "  pnputil /add-driver `"<U盘路径>\output\drivers\*.inf`" /subdirs /install" -ForegroundColor Gray
+[RecoveryArtifacts.psm1:156] [关键字: key=clear] # 9. WLAN 状态与驱动 (绝不包含 key=clear)

@@ -1,0 +1,111 @@
+================================================================================
+任务第 2 步：函数级与诊断层级真实对照表 (77fe7fa vs 当前实盘)
+================================================================================
+
+### 一、app\modules\ 模块导出函数对照
+
+--------------------------------------------------------------------------------
+模块文件: app/modules/NetworkInventory.psm1
+--------------------------------------------------------------------------------
+  - 77fe7fa 导出函数总数: 8 个
+      * Get-ToolConfig
+      * Get-DefaultRouteInfo
+      * Get-ActivePhysicalAdapter
+      * Get-AdapterIpDetails
+      * Get-ProxyStatus
+      * Get-NetworkServiceStatus
+      * Get-WlanDiagnostics
+      * Get-LocalWatchdogStatus
+  - 当前实盘导出函数总数: 13 个
+      * Get-ToolConfig
+      * Get-DefaultRouteInfo
+      * Get-IPv6Status
+      * Get-ActivePhysicalAdapter
+      * Get-AdapterPowerManagementStatus
+      * Get-WlanLinkQuality
+      * Get-AdapterIpDetails
+      * Get-DhcpLeaseInfo
+      * Get-NcsiStatus
+      * Get-ProxyStatus
+      * Get-NetworkServiceStatus
+      * Get-WlanDiagnostics
+      * Get-LocalWatchdogStatus
+  - 新增函数 (5 个):
+      + Get-IPv6Status
+      + Get-AdapterPowerManagementStatus
+      + Get-WlanLinkQuality
+      + Get-DhcpLeaseInfo
+      + Get-NcsiStatus
+  - 删除函数 (0 个): 无
+  - 原有函数内部改写与扩充情况:
+      * Get-ToolConfig: 内部已重写/扩充
+      * Get-DefaultRouteInfo: 内部已重写/扩充
+      * Get-ActivePhysicalAdapter: 代码完全未变
+      * Get-AdapterIpDetails: 代码完全未变
+      * Get-ProxyStatus: 代码完全未变
+      * Get-NetworkServiceStatus: 代码完全未变
+      * Get-WlanDiagnostics: 代码完全未变
+      * Get-LocalWatchdogStatus: 内部已重写/扩充
+
+
+--------------------------------------------------------------------------------
+模块文件: app/modules/NetworkHealth.psm1
+--------------------------------------------------------------------------------
+  - 77fe7fa 导出函数总数: 3 个
+      * Test-DynamicGateway
+      * Test-RawTcpTargets
+      * Test-DnsResolution
+  - 当前实盘导出函数总数: 3 个
+      * Test-DynamicGateway
+      * Test-RawTcpTargets
+      * Test-DnsResolution
+  - 新增函数 (0 个):
+  - 删除函数 (0 个): 无
+  - 原有函数内部改写与扩充情况:
+      * Test-DynamicGateway: 代码完全未变
+      * Test-RawTcpTargets: 内部已重写/扩充
+      * Test-DnsResolution: 代码完全未变
+
+
+--------------------------------------------------------------------------------
+模块文件: app/modules/DiagnosticArtifacts.psm1
+--------------------------------------------------------------------------------
+  - 77fe7fa 导出函数总数: 2 个
+      * Export-NetworkDrivers
+      * New-DiagnosticBundle
+  - 当前实盘导出函数总数: 2 个
+      * Export-NetworkDrivers
+      * New-DiagnosticBundle
+  - 新增函数 (0 个):
+  - 删除函数 (0 个): 无
+  - 原有函数内部改写与扩充情况:
+      * Export-NetworkDrivers: 内部已重写/扩充
+      * New-DiagnosticBundle: 内部已重写/扩充
+
+
+### 二、app\NetworkDiagnostics.ps1 诊断层级对比 (原 9 层 vs 现 12 层)
+
+77fe7fa 诊断层级清单 (共 9 层):
+  [1] [1/9] 本地网络看门狗安全互斥检测
+  [2] [2/9] 默认路由与下一跳网关探测
+  [3] [3/9] 活动网络适配器核验
+  [4] [4/9] IP 配置与 DHCP 分配
+  [5] [5/9] 动态网关连通性 (参考信号)
+  [6] [6/9] 公网直连 TCP 握手 (绕过系统代理，4 个不同运营商/端口目标)
+  [7] [7/9] 域名系统 (DNS) 解析测试
+  [8] [8/9] 系统代理配置 (WinINET / WinHTTP 只读)
+  [9] [9/9] Windows 核心网络服务状态
+
+当前实盘诊断层级清单 (共 12 层):
+  [1] [1/12] 本地网络看门狗安全互斥检测
+  [2] [2/12] IPv4 默认路由与下一跳网关探测
+  [3] [3/12] IPv6 默认路由与双栈状态检测
+  [4] [4/12] 活动网络适配器核验与硬件电源管理
+  [5] [5/12] 无线链路质量指标 (RSSI / 信道 / 协商速率)
+  [6] [6/12] IP 配置与 DHCP 租约详细信息
+  [7] [7/12] NCSI 系统连通性判定与探针状态 (只读)
+  [8] [8/12] 动态网关连通性 (参考信号)
+  [9] [9/12] 公网直连 TCP 握手 (绕过系统代理，4 个不同运营商/端口目标)
+  [10] [10/12] 域名系统 (DNS) 解析测试
+  [11] [11/12] 系统代理配置 (WinINET / WinHTTP 只读)
+  [12] [12/12] Windows 核心网络服务状态 (含 NlaSvc / WinHttpAutoProxySvc)

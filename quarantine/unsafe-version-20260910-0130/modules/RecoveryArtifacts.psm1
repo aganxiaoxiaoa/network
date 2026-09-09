@@ -195,4 +195,4 @@ function New-DiagnosticBundle {
 Export-ModuleMember -Function @(
     'Export-NetworkDrivers',
     'New-DiagnosticBundle'
-)
+)

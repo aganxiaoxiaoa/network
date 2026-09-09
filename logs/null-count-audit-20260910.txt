@@ -1,0 +1,17 @@
+=== app\ 目录下所有 .Count 语法安全审计明细 ===
+审计时间: 2026-09-10
+总计发现 .Count 访问点: 13 处
+
+[NetworkDiagnostics.ps1:85] if (@($v6Info.GlobalAddresses).Count -gt 0) {
+[NetworkDiagnostics.ps1:91] if (@($v6Info.GlobalAddresses).Count -gt 0) {
+[NetworkDiagnostics.ps1:154] # Bug 2 修复: @($ipDetails.DnsServers).Count
+[NetworkDiagnostics.ps1:155] Write-Host "   - DNS 服务器: $(if (@($ipDetails.DnsServers).Count -gt 0) { $ipDetails.DnsServers -join ', ' } else { '[无 DNS 服务器配置]' })"
+[modules\DiagnosticArtifacts.psm1:62] if (@($driverList).Count -eq 0) {
+[modules\DiagnosticArtifacts.psm1:67] Write-Host "   - 共检测到 $(@($driverList).Count) 个第三方网络硬件驱动:" -ForegroundColor Green
+[modules\NetworkHealth.psm1:54] if (@($parts).Count -ne 2) { continue }
+[modules\NetworkInventory.psm1:39] if (@($routes).Count -eq 0) {
+[modules\NetworkInventory.psm1:308] # 检查 Clash/ProxyStack 状态 (修复 Bug 1: 当零进程时使用 @() 包装，避免 StrictMode 2.0 下访问 $null.Count 抛错)
+[modules\NetworkInventory.psm1:318] ProxyStackCount = @($proxyProcs).Count
+[modules\NetworkInventory.psm1:333] $hasDefaultRoute = (@($routes).Count -gt 0)
+[modules\NetworkInventory.psm1:503] if (@($parts).Count -eq 6) {
+[modules\NetworkInventory.psm1:550] if (@($dhcpAdapters).Count -eq 0) {

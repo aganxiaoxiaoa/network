@@ -1,0 +1,212 @@
+================================================================================
+app\ 目录 35 个安全红线关键字逐文件扫描报告
+================================================================================
+扫描目录: E:\Network-Recovery-USB\app
+扫描文件总数: 5
+命中总数: 1
+命中文件数: 1
+
+--- 逐文件逐关键字统计明细 ---
+
+[文件] app\NetworkDiagnostics.ps1
+  * [命中 0 次] Disable-NetAdapter
+  * [命中 0 次] Enable-NetAdapter
+  * [命中 0 次] Restart-NetAdapter
+  * [命中 0 次] ipconfig /release
+  * [命中 0 次] ipconfig /renew
+  * [命中 0 次] ipconfig /flushdns
+  * [命中 0 次] netsh winsock reset
+  * [命中 0 次] netsh int ip reset
+  * [命中 0 次] netcfg -d
+  * [命中 0 次] netsh winhttp reset proxy
+  * [命中 0 次] netsh winhttp set proxy
+  * [命中 0 次] Set-DnsClientServerAddress
+  * [命中 0 次] Set-NetIPInterface
+  * [命中 0 次] Set-NetIPAddress
+  * [命中 0 次] New-NetIPAddress
+  * [命中 0 次] Remove-NetIPAddress
+  * [命中 0 次] New-NetRoute
+  * [命中 0 次] Set-NetRoute
+  * [命中 0 次] Remove-NetRoute
+  * [命中 0 次] Clear-DnsClientCache
+  * [命中 0 次] Set-NetAdapterPowerManagement
+  * [命中 0 次] Set-NetAdapterAdvancedProperty
+  * [命中 0 次] Set-ItemProperty
+  * [命中 0 次] Remove-ItemProperty
+  * [命中 0 次] SetEnvironmentVariable
+  * [命中 0 次] Stop-Service
+  * [命中 0 次] Start-Service
+  * [命中 0 次] Restart-Service
+  * [命中 0 次] Stop-Process
+  * [命中 0 次] Register-ScheduledTask
+  * [命中 0 次] Unregister-ScheduledTask
+  * [命中 0 次] key=clear
+  * [命中 0 次] pnputil /add-driver
+  * [命中 0 次] pnputil /delete-driver
+  * [命中 0 次] Restart-Computer
+
+[文件] app\NetworkRecovery.Config.psd1
+  * [命中 0 次] Disable-NetAdapter
+  * [命中 0 次] Enable-NetAdapter
+  * [命中 0 次] Restart-NetAdapter
+  * [命中 0 次] ipconfig /release
+  * [命中 0 次] ipconfig /renew
+  * [命中 0 次] ipconfig /flushdns
+  * [命中 0 次] netsh winsock reset
+  * [命中 0 次] netsh int ip reset
+  * [命中 0 次] netcfg -d
+  * [命中 0 次] netsh winhttp reset proxy
+  * [命中 0 次] netsh winhttp set proxy
+  * [命中 0 次] Set-DnsClientServerAddress
+  * [命中 0 次] Set-NetIPInterface
+  * [命中 0 次] Set-NetIPAddress
+  * [命中 0 次] New-NetIPAddress
+  * [命中 0 次] Remove-NetIPAddress
+  * [命中 0 次] New-NetRoute
+  * [命中 0 次] Set-NetRoute
+  * [命中 0 次] Remove-NetRoute
+  * [命中 0 次] Clear-DnsClientCache
+  * [命中 0 次] Set-NetAdapterPowerManagement
+  * [命中 0 次] Set-NetAdapterAdvancedProperty
+  * [命中 0 次] Set-ItemProperty
+  * [命中 0 次] Remove-ItemProperty
+  * [命中 0 次] SetEnvironmentVariable
+  * [命中 0 次] Stop-Service
+  * [命中 0 次] Start-Service
+  * [命中 0 次] Restart-Service
+  * [命中 0 次] Stop-Process
+  * [命中 0 次] Register-ScheduledTask
+  * [命中 0 次] Unregister-ScheduledTask
+  * [命中 0 次] key=clear
+  * [命中 0 次] pnputil /add-driver
+  * [命中 0 次] pnputil /delete-driver
+  * [命中 0 次] Restart-Computer
+
+[文件] app\modules\DiagnosticArtifacts.psm1
+  * [命中 0 次] Disable-NetAdapter
+  * [命中 0 次] Enable-NetAdapter
+  * [命中 0 次] Restart-NetAdapter
+  * [命中 0 次] ipconfig /release
+  * [命中 0 次] ipconfig /renew
+  * [命中 0 次] ipconfig /flushdns
+  * [命中 0 次] netsh winsock reset
+  * [命中 0 次] netsh int ip reset
+  * [命中 0 次] netcfg -d
+  * [命中 0 次] netsh winhttp reset proxy
+  * [命中 0 次] netsh winhttp set proxy
+  * [命中 0 次] Set-DnsClientServerAddress
+  * [命中 0 次] Set-NetIPInterface
+  * [命中 0 次] Set-NetIPAddress
+  * [命中 0 次] New-NetIPAddress
+  * [命中 0 次] Remove-NetIPAddress
+  * [命中 0 次] New-NetRoute
+  * [命中 0 次] Set-NetRoute
+  * [命中 0 次] Remove-NetRoute
+  * [命中 0 次] Clear-DnsClientCache
+  * [命中 0 次] Set-NetAdapterPowerManagement
+  * [命中 0 次] Set-NetAdapterAdvancedProperty
+  * [命中 0 次] Set-ItemProperty
+  * [命中 0 次] Remove-ItemProperty
+  * [命中 0 次] SetEnvironmentVariable
+  * [命中 0 次] Stop-Service
+  * [命中 0 次] Start-Service
+  * [命中 0 次] Restart-Service
+  * [命中 0 次] Stop-Process
+  * [命中 0 次] Register-ScheduledTask
+  * [命中 0 次] Unregister-ScheduledTask
+  * [命中 0 次] key=clear
+  * [命中 1 次] pnputil /add-driver
+      第 95 行: Write-Host "  pnputil /add-driver `"<U盘路径>\backups\network-drivers-$ts\*.inf`" /subdirs /install" -ForegroundColor Gray
+  * [命中 0 次] pnputil /delete-driver
+  * [命中 0 次] Restart-Computer
+
+[文件] app\modules\NetworkHealth.psm1
+  * [命中 0 次] Disable-NetAdapter
+  * [命中 0 次] Enable-NetAdapter
+  * [命中 0 次] Restart-NetAdapter
+  * [命中 0 次] ipconfig /release
+  * [命中 0 次] ipconfig /renew
+  * [命中 0 次] ipconfig /flushdns
+  * [命中 0 次] netsh winsock reset
+  * [命中 0 次] netsh int ip reset
+  * [命中 0 次] netcfg -d
+  * [命中 0 次] netsh winhttp reset proxy
+  * [命中 0 次] netsh winhttp set proxy
+  * [命中 0 次] Set-DnsClientServerAddress
+  * [命中 0 次] Set-NetIPInterface
+  * [命中 0 次] Set-NetIPAddress
+  * [命中 0 次] New-NetIPAddress
+  * [命中 0 次] Remove-NetIPAddress
+  * [命中 0 次] New-NetRoute
+  * [命中 0 次] Set-NetRoute
+  * [命中 0 次] Remove-NetRoute
+  * [命中 0 次] Clear-DnsClientCache
+  * [命中 0 次] Set-NetAdapterPowerManagement
+  * [命中 0 次] Set-NetAdapterAdvancedProperty
+  * [命中 0 次] Set-ItemProperty
+  * [命中 0 次] Remove-ItemProperty
+  * [命中 0 次] SetEnvironmentVariable
+  * [命中 0 次] Stop-Service
+  * [命中 0 次] Start-Service
+  * [命中 0 次] Restart-Service
+  * [命中 0 次] Stop-Process
+  * [命中 0 次] Register-ScheduledTask
+  * [命中 0 次] Unregister-ScheduledTask
+  * [命中 0 次] key=clear
+  * [命中 0 次] pnputil /add-driver
+  * [命中 0 次] pnputil /delete-driver
+  * [命中 0 次] Restart-Computer
+
+[文件] app\modules\NetworkInventory.psm1
+  * [命中 0 次] Disable-NetAdapter
+  * [命中 0 次] Enable-NetAdapter
+  * [命中 0 次] Restart-NetAdapter
+  * [命中 0 次] ipconfig /release
+  * [命中 0 次] ipconfig /renew
+  * [命中 0 次] ipconfig /flushdns
+  * [命中 0 次] netsh winsock reset
+  * [命中 0 次] netsh int ip reset
+  * [命中 0 次] netcfg -d
+  * [命中 0 次] netsh winhttp reset proxy
+  * [命中 0 次] netsh winhttp set proxy
+  * [命中 0 次] Set-DnsClientServerAddress
+  * [命中 0 次] Set-NetIPInterface
+  * [命中 0 次] Set-NetIPAddress
+  * [命中 0 次] New-NetIPAddress
+  * [命中 0 次] Remove-NetIPAddress
+  * [命中 0 次] New-NetRoute
+  * [命中 0 次] Set-NetRoute
+  * [命中 0 次] Remove-NetRoute
+  * [命中 0 次] Clear-DnsClientCache
+  * [命中 0 次] Set-NetAdapterPowerManagement
+  * [命中 0 次] Set-NetAdapterAdvancedProperty
+  * [命中 0 次] Set-ItemProperty
+  * [命中 0 次] Remove-ItemProperty
+  * [命中 0 次] SetEnvironmentVariable
+  * [命中 0 次] Stop-Service
+  * [命中 0 次] Start-Service
+  * [命中 0 次] Restart-Service
+  * [命中 0 次] Stop-Process
+  * [命中 0 次] Register-ScheduledTask
+  * [命中 0 次] Unregister-ScheduledTask
+  * [命中 0 次] key=clear
+  * [命中 0 次] pnputil /add-driver
+  * [命中 0 次] pnputil /delete-driver
+  * [命中 0 次] Restart-Computer
+
+================================================================================
+额外三项关键安全专项审计 (a / b / c)
+================================================================================
+
+[专项 a] 电源管理检查命令审计:
+  - [app\NetworkDiagnostics.ps1:114] $pmStatus = Get-AdapterPowerManagementStatus -AdapterName $nic.Name
+  - [app\modules\DiagnosticArtifacts.psm1:147] (Get-NetAdapterPowerManagement -ErrorAction SilentlyContinue | Format-List * 2>&1) | Out-File (Join-Path $tempDir "14_adapter_power_mgmt.txt") -Encoding UTF8
+  - [app\modules\NetworkInventory.psm1:383] function Get-AdapterPowerManagementStatus {
+  - [app\modules\NetworkInventory.psm1:401] $pm = Get-NetAdapterPowerManagement -Name $AdapterName -ErrorAction SilentlyContinue
+  - [app\modules\NetworkInventory.psm1:676] 'Get-AdapterPowerManagementStatus',
+
+[专项 b] 127.0.0.1:9097 mihomo API 请求审计:
+  - [app\modules\NetworkInventory.psm1:310] $_.Name -match "clash-verge|verge-mihomo|ProxyBridge"
+
+[专项 c] HKCU Internet Settings 写入审计:
+  - [app\modules\NetworkInventory.psm1:207] $regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
