@@ -103,4 +103,26 @@
         "EffectiveMetric",
         "ServiceStatuses"
     )
+
+    # --------------------------------------------------------------------------
+    # 网卡高级属性省电与现代待机配置
+    # --------------------------------------------------------------------------
+
+    # 网卡高级属性省电与连接稳定性关键字过滤表 (大小写不敏感子串匹配，用于高亮分类)
+    PowerSaveKeywords = @(
+        "U-APSD", "UAPSD", "APSD",
+        "MIMO Power Save", "MIMO 省电",
+        "Power Save", "Power Saving", "省电", "节能",
+        "Roaming Aggressiveness", "Roaming Sensitivity", "漫游",
+        "Preferred Band", "Band Preference", "频段", "频带",
+        "Throughput Booster", "Throughput Enhancement", "吞吐",
+        "Transmit Power", "传输功率", "发射功率",
+        "Selective Suspend", "选择性挂起",
+        "Packet Coalescing", "数据包合并",
+        "ARP Offload", "NS Offload", "卸载",
+        "Sleep on WoWLAN", "WoWLAN", "唤醒"
+    )
+
+    # 是否在控制台显示未命中关键字的全部高级属性 (默认 False，全量属性始终完整写入 logs\)
+    ShowAllAdvancedProperties = $false
 }

@@ -1,0 +1,24 @@
+﻿================================================================================
+网卡高级属性全量枚举日志 (适配器: WLAN)
+采集时间: 2026-09-10 05:46:58
+总属性数: 17 | 省电/稳定性匹配项: 9 | 处于启用状态项: 6
+================================================================================
+DisplayName                         | DisplayValue       | RegistryKeyword           | 分类标记
+-----------------------------------------------------------------------------------------------
+AMSDU Rx                            | 已启用                | AMSDURx                   | [常规属性]
+AMSDU Tx                            | 已启用                | AMSDUTx                   | [常规属性]
+Band Selection                      | 1. All Band        | BandSelection             | [常规属性]
+2.4GHz channel bandwidth            | 1. Auto            | BWSelection24G            | [常规属性]
+5GHz channel bandwidth              | 1. Auto            | BWSelection5G             | [常规属性]
+6GHz channel bandwidth              | 1. Auto            | BWSelection6G             | [常规属性]
+802.11ax/ac/n/abg                   | 1. 802.11ax        | CurrPhyMode               | [常规属性]
+ARP Offload for WOWLAN              | 已启用                | DisableARPOffload         | [省电相关-已开启/关注]
+GTK Rekey for WOWLAN                | 已启用                | DisableGTKRekey           | [省电相关-已开启/关注]
+唤醒幻数据包                              | 已启用                | DisableWakeOnMagic        | [省电相关-已开启/关注]
+唤醒模式匹配                              | 已启用                | DisableWakeOnPattern      | [省电相关-已开启/关注]
+省电                                  | 已禁用                | LowPowerEnable            | [省电相关-未开启/已禁用]
+首选频带                                | 1. 无首选项            | PreferredBand             | [省电相关-已开启/关注]
+漫游主动性                               | 3. 中低              | RoamIndicateTh            | [省电相关-未开启/已禁用]
+Transmit Power Level                | 1. 最高              | TxPowerLevel              | [省电相关-已开启/关注]
+U-APSD Support                      | 已禁用                | UAPSDSupport              | [省电相关-未开启/已禁用]
+Miracast prefer band                | Auto               | WfdGOOperatingChannel     | [常规属性]

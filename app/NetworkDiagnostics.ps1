@@ -113,13 +113,46 @@ function Invoke-RunDiagnosis {
         Write-Host "   - MAC 地址: $($nic.MacAddress)"
         Write-Host "   - 承载默认路由: $(if ($nic.IsDefaultRouteOwner) { '是' } else { '否 (可能由 VPN/虚拟接口或备用网卡承载)' })"
 
-        # 只读读取网卡电源管理设置
+        # 只读读取系统待机架构与电源管理设置 (子节 4.1)
+        Write-Host "   [子节 4.1: 传统电源管理与系统待机架构]" -ForegroundColor Gray
+        $sleepCap = Get-SystemSleepCapability
+        $standbyDesc = if ($sleepCap.IsModernStandby -eq $true) { "现代待机 (Modern Standby / S0 低电量待机)" } elseif ($sleepCap.SupportsS3) { "传统待机 (S3)" } else { "未知待机架构" }
+        Write-Host "   - 系统待机架构: $standbyDesc" -ForegroundColor Gray
+
         $pmStatus = Get-AdapterPowerManagementStatus -AdapterName $nic.Name
         if ($pmStatus.PowerSavingEnabled) {
-            Write-Host "   - 硬件节能状态: [警告] 允许计算机关闭此设备以节约电源 (Enabled)" -ForegroundColor Red
+            Write-Host "   - 传统电源管理状态: [警告] 允许计算机关闭此设备以节约电源 (Enabled)" -ForegroundColor Red
             Write-Host "     $($pmStatus.Note)" -ForegroundColor Yellow
+        } elseif ($pmStatus.AllowTurnOffDevice -eq 'Unsupported') {
+            if ($sleepCap.IsModernStandby -eq $true) {
+                Write-Host "   - 传统电源管理状态: Unsupported (本机为现代待机机型，网卡驱动不暴露传统电源管理睡眠控制接口，省电开关请见下方高级属性一节)" -ForegroundColor Gray
+            } else {
+                Write-Host "   - 传统电源管理状态: Unsupported ($($pmStatus.Note))" -ForegroundColor Gray
+            }
         } else {
-            Write-Host "   - 硬件节能状态: $($pmStatus.AllowTurnOffDevice) ($($pmStatus.Note))" -ForegroundColor Gray
+            Write-Host "   - 传统电源管理状态: $($pmStatus.AllowTurnOffDevice) ($($pmStatus.Note))" -ForegroundColor Gray
+        }
+
+        # 只读读取网卡高级属性省电与稳定性开关 (子节 4.2)
+        Write-Host "   [子节 4.2: 网卡高级属性省电与稳定性开关]" -ForegroundColor Gray
+        $logDir = Join-Path $ToolRoot "logs"
+        $kwList = if ($cfg.ContainsKey('PowerSaveKeywords')) { $cfg['PowerSaveKeywords'] } else { @() }
+        $advProps = Get-AdapterAdvancedPowerProperties -AdapterName $nic.Name -Keywords $kwList -LogDir $logDir
+        if ($advProps.Found) {
+            $logFileName = if ($advProps.LogPath) { [System.IO.Path]::GetFileName($advProps.LogPath) } else { "logs 目录" }
+            Write-Host "   - 高级属性全量枚举: 共 $($advProps.TotalPropertiesCount) 项 (全量明细已记录至 $logFileName)" -ForegroundColor Gray
+            Write-Host "   - 省电/连接稳定性项: 匹配到 $($advProps.PowerRelatedCount) 项 (其中 $($advProps.EnabledCount) 项处于启用/关注状态):" -ForegroundColor Gray
+            
+            foreach ($prop in $advProps.PowerRelatedProperties) {
+                $statusColor = if ($prop.IsEnabled) { [ConsoleColor]::Yellow } else { [ConsoleColor]::Green }
+                $flagText = if ($prop.IsEnabled) { "[启用/关注]" } else { "[已关闭/已禁用]" }
+                Write-Host ("     * {0,-26} | 当前值: {1,-12} {2} (Key: {3})" -f $prop.DisplayName, $prop.DisplayValue, $flagText, $prop.RegistryKeyword) -ForegroundColor $statusColor
+            }
+
+            Write-Host "   - 汇总结论: 检测到 $($advProps.PowerRelatedCount) 项省电与稳定性相关属性，其中 $($advProps.EnabledCount) 项当前处于启用状态。" -ForegroundColor Cyan
+            Write-Host "   - [排查与调整指引] 若遇到 Wi-Fi 睡眠断流或漫游掉线，可手动打开: 设备管理器 → 网络适配器 → $($nic.Name) → 属性 → 高级。本工具遵循只读原则，绝不自动修改任何省电设置，需要用户手动调整。" -ForegroundColor Yellow
+        } else {
+            Write-Host "   - 高级属性查询提示: $($advProps.Error)" -ForegroundColor Yellow
         }
     } else {
         Write-Host "   - [警告] 未找到符合条件的活动物理网络适配器！" -ForegroundColor Red

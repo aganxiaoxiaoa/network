@@ -884,6 +884,200 @@ function Get-AdapterPowerManagementStatus {
 
 }
 
+function Get-SystemSleepCapability {
+    [CmdletBinding()]
+    param()
+
+    try {
+        $raw = (powercfg /a 2>&1) | Out-String
+
+        $availableSection = ""
+        $unavailableSection = ""
+        if ($raw -match "(?s)此系统上有以下睡眠状态:(.*?)(此系统上没有以下睡眠状态:|$)") {
+            $availableSection = $matches[1]
+        } elseif ($raw -match "(?s)The following sleep states are available on this system:(.*?)(The following sleep states are not available on this system:|$)") {
+            $availableSection = $matches[1]
+        }
+        if ($raw -match "(?s)(此系统上没有以下睡眠状态|The following sleep states are not available on this system):(.*?)$") {
+            $unavailableSection = $matches[2]
+        }
+
+        $s0Available = ($availableSection -match 'S0')
+        $s3Available = ($availableSection -match 'S3')
+
+        $isModernStandby = if ($s0Available) { $true } elseif ($s3Available) { $false } else { "Unknown" }
+
+        $unavailableList = @()
+        if (-not [string]::IsNullOrWhiteSpace($unavailableSection)) {
+            $pattern = "(?m)^\s{4}(待机\s*\([^)]+\)|休眠|混合睡眠|快速启动|Standby\s*\([^)]+\)|Hibernate|Hybrid\s*Sleep|Fast\s*Startup)"
+            $blocks = [regex]::Split($unavailableSection, $pattern)
+            for ($i = 1; $i -lt @($blocks).Count; $i += 2) {
+                $stateName = $blocks[$i].Trim()
+                $reasonText = if ($i + 1 -lt @($blocks).Count) { $blocks[$i+1].Trim() } else { "" }
+                $unavailableList += [PSCustomObject]@{
+                    State  = $stateName
+                    Reason = ($reasonText -replace '\r?\n\s*', ' ')
+                }
+            }
+        }
+
+        return [PSCustomObject]@{
+            IsModernStandby   = $isModernStandby
+            SupportsS0        = $s0Available
+            SupportsS3        = $s3Available
+            UnavailableStates = @($unavailableList)
+            RawOutput         = $raw.Trim()
+        }
+    } catch {
+        return [PSCustomObject]@{
+            IsModernStandby   = "Unknown"
+            SupportsS0        = $false
+            SupportsS3        = $false
+            UnavailableStates = @()
+            RawOutput         = $_.Exception.Message
+        }
+    }
+}
+
+function Get-AdapterAdvancedPowerProperties {
+    [CmdletBinding()]
+    param(
+        [string]$AdapterName,
+        [array]$Keywords = @(),
+        [string]$LogDir = ""
+    )
+
+    if ([string]::IsNullOrWhiteSpace($AdapterName)) {
+        return [PSCustomObject]@{
+            Found                  = $false
+            AdapterName            = ""
+            Error                  = "未指定网卡名称"
+            TotalPropertiesCount   = 0
+            PowerRelatedProperties = @()
+            AllProperties          = @()
+            PowerRelatedCount      = 0
+            EnabledCount           = 0
+            LogPath                = $null
+        }
+    }
+
+    # 预检网卡是否存在
+    $nic = Get-NetAdapter -Name $AdapterName -ErrorAction SilentlyContinue
+    if (-not $nic) {
+        return [PSCustomObject]@{
+            Found                  = $false
+            AdapterName            = $AdapterName
+            Error                  = "未找到该网卡: $AdapterName"
+            TotalPropertiesCount   = 0
+            PowerRelatedProperties = @()
+            AllProperties          = @()
+            PowerRelatedCount      = 0
+            EnabledCount           = 0
+            LogPath                = $null
+        }
+    }
+
+    try {
+        $rawProps = @(Get-NetAdapterAdvancedProperty -Name $AdapterName -ErrorAction SilentlyContinue)
+        $allPropsList = @()
+        $powerPropsList = @()
+        $enabledCount = 0
+
+        # 全量遍历所有属性
+        foreach ($p in $rawProps) {
+            $dispName = if ($p -and $p.PSObject.Properties['DisplayName']) { [string]$p.DisplayName } else { "" }
+            $dispVal  = if ($p -and $p.PSObject.Properties['DisplayValue']) { [string]$p.DisplayValue } else { "" }
+            $regKey   = if ($p -and $p.PSObject.Properties['RegistryKeyword']) { [string]$p.RegistryKeyword } else { "" }
+            $regVal   = if ($p -and $p.PSObject.Properties['RegistryValue']) { [string]$p.RegistryValue } else { "" }
+
+            $propObj = [PSCustomObject]@{
+                DisplayName     = $dispName
+                DisplayValue    = $dispVal
+                RegistryKeyword = $regKey
+                RegistryValue   = $regVal
+                IsPowerRelated  = $false
+                MatchedKeywords = @()
+                IsEnabled       = $false
+            }
+
+            # 关键字匹配 (大小写不敏感子串匹配)
+            $matched = @()
+            foreach ($kw in @($Keywords)) {
+                if (-not [string]::IsNullOrWhiteSpace($kw)) {
+                    if ($dispName.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 -or
+                        $regKey.IndexOf($kw, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                        $matched += $kw
+                    }
+                }
+            }
+
+            if (@($matched).Count -gt 0) {
+                $propObj.IsPowerRelated = $true
+                $propObj.MatchedKeywords = @($matched)
+                # 判定当前是否处于启用/关注状态 (Enabled / 已启用 / 开启 / Active / 1. 最高 等)
+                $isEnabled = ($dispVal -match '已启用|Enabled|开启|Active|^1(\.|$)|Yes|True')
+                $propObj.IsEnabled = $isEnabled
+                if ($isEnabled) { $enabledCount++ }
+                $powerPropsList += $propObj
+            }
+
+            $allPropsList += $propObj
+        }
+
+        # 写入全量属性日志至 logs\ (若指定了有效目录)
+        $logPath = $null
+        if (-not [string]::IsNullOrWhiteSpace($LogDir) -and (Test-Path $LogDir)) {
+            $ts = (Get-Date).ToString("yyyyMMdd_HHmmss")
+            $logPath = Join-Path $LogDir "adapter_advanced_properties_$ts.log"
+            $logLines = @()
+            $logLines += "================================================================================"
+            $logLines += "网卡高级属性全量枚举日志 (适配器: $AdapterName)"
+            $logLines += "采集时间: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+            $logLines += "总属性数: $(@($allPropsList).Count) | 省电/稳定性匹配项: $(@($powerPropsList).Count) | 处于启用状态项: $enabledCount"
+            $logLines += "================================================================================"
+            $logLines += ("{0,-35} | {1,-18} | {2,-25} | {3}" -f "DisplayName", "DisplayValue", "RegistryKeyword", "分类标记")
+            $logLines += ("-" * 95)
+            foreach ($item in $allPropsList) {
+                $tag = if ($item.IsPowerRelated) {
+                    if ($item.IsEnabled) { "[省电相关-已开启/关注]" } else { "[省电相关-未开启/已禁用]" }
+                } else {
+                    "[常规属性]"
+                }
+                $logLines += ("{0,-35} | {1,-18} | {2,-25} | {3}" -f $item.DisplayName, $item.DisplayValue, $item.RegistryKeyword, $tag)
+            }
+            try {
+                $logLines | Out-File -FilePath $logPath -Encoding UTF8
+            } catch {
+                $logPath = $null
+            }
+        }
+
+        return [PSCustomObject]@{
+            Found                  = $true
+            AdapterName            = $AdapterName
+            Error                  = $null
+            TotalPropertiesCount   = @($allPropsList).Count
+            PowerRelatedProperties = @($powerPropsList)
+            AllProperties          = @($allPropsList)
+            PowerRelatedCount      = @($powerPropsList).Count
+            EnabledCount           = $enabledCount
+            LogPath                = $logPath
+        }
+    } catch {
+        return [PSCustomObject]@{
+            Found                  = $false
+            AdapterName            = $AdapterName
+            Error                  = $_.Exception.Message
+            TotalPropertiesCount   = 0
+            PowerRelatedProperties = @()
+            AllProperties          = @()
+            PowerRelatedCount      = 0
+            EnabledCount           = 0
+            LogPath                = $null
+        }
+    }
+}
+
 
 
 function Get-WlanLinkQuality {
@@ -1651,6 +1845,8 @@ Export-ModuleMember -Function @(
     'Get-IPv6Status',
     'Get-ActivePhysicalAdapter',
     'Get-AdapterPowerManagementStatus',
+    'Get-SystemSleepCapability',
+    'Get-AdapterAdvancedPowerProperties',
     'Get-WlanLinkQuality',
     'Get-AdapterIpDetails',
     'Get-DhcpLeaseInfo',
