@@ -70,7 +70,7 @@ Network-Recovery-USB\
    - `[6] Compare With Baseline (与基线比对差异)`：
      调用 `Compare-NetworkBaseline`，支持交互输入指定基线文件或直接回车比对由 `latest.txt` 指向的最近基线。精准比对 13 项核心稳定字段与 10 项易变参考指标，明细自动落盘写入 `logs\baseline_compare_*.log`。退出码：0 稳定字段无差异，2 发现核心稳定字段差异 (潜在网络异常)，1 执行错误。
    - `[7] Start Read-Only Link Sampler (纯只读链路采样，不会修改任何设置)`：
-     调用 `Start-LinkSampler`，对物理网络适配器状态、收发包及丢包错误计数、流量吞吐增量、网关 ARP 状态与 ICMP 响应、网络配置连通性等 19 项核心指标进行高频只读连续采样。默认采样间隔为 2 秒，持续 60 分钟（支持自定义间隔与时长，或时长为 0 持续运行至按 Ctrl+C 停止）。采样记录实时按行追加至 `output\watch\link-sample-<yyyyMMdd-HHmmss>.csv`，它只读不写网络配置。
+     调用 `Start-LinkSampler`，对物理网络适配器状态、收发包及丢包错误计数、流量吞吐增量、网关 ARP 状态与 ICMP 响应、网络配置连通性等 19 项核心指标及单轮耗时（`CycleMs`）进行高频只读连续采样。支持动态 `-ToolRoot` 自动适配 U 盘盘符。新增 `-PingCount` 参数（默认 1，可选 0~3，0 为跳过 ping 并写 SKIPPED 以最大化采样频率）。默认采样间隔为 2 秒，持续 60 分钟（支持自定义间隔、Ping 次数与时长，或时长为 0 持续运行至按 Ctrl+C 停止）。若要精确捕获毫秒级断开事件（如 11004 → 8003 窗口），推荐使用 `-IntervalSeconds 1 -PingCount 1`（实测节奏 1.23 秒，单轮耗时约 215ms；PingCount=0 时实测节奏 1.21 秒，完全低于 1.5 秒）。采样记录实时按行追加至 `output\watch\link-sample-<yyyyMMdd-HHmmss>.csv`，它只读不写网络配置。注意：本采样器应在 Windows PowerShell 5.1 原生环境下运行。
    - `[0] Exit (退出工具箱)`：
      打印 `Exiting.`，跳出主循环并释放单实例互斥锁退出。
 
@@ -81,7 +81,7 @@ Network-Recovery-USB\
    - `-Action BackupDrivers` / `-Action ExportDrivers`：导出第三方网络驱动至 `backups\`
    - `-Action SaveBaseline`：保存当前网络健康与配置基线 (退出码: 0成功, 1错误)
    - `-Action CompareBaseline [-BaselineFile <文件名或路径>]`：与基线比对差异 (退出码: 0无差异, 2有差异, 1错误)
-   - `-Action Watch [-IntervalSeconds N] [-DurationMinutes M] [-OutputPath <路径>]`：启动纯只读链路采样 (默认每 2 秒一次，持续 60 分钟，输出至 `output\watch\`，它只读不写网络配置)
+   - `-Action Watch [-IntervalSeconds N] [-DurationMinutes M] [-PingCount P] [-OutputPath <路径>]`：启动纯只读链路采样 (默认每 2 秒一次，PingCount=1，持续 60 分钟，输出至 `output\watch\`，末尾包含 CycleMs 轮次耗时，它只读不写网络配置。捕获断开事件推荐 `-IntervalSeconds 1 -PingCount 1` 实测节奏 1.23 秒，应在 Windows PowerShell 5.1 下运行)
    - `-Action Menu`：打开交互式主菜单 (默认)
    - `-Action Help`：查看帮助信息
 

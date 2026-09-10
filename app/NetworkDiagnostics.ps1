@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+﻿﻿#Requires -Version 5.1
 # ==============================================================================
 # NetworkDiagnostics.ps1
 # Windows 10/11 便携网络只读诊断工具箱 (完全驻留于 U 盘独立安全版)
@@ -15,6 +15,8 @@ param(
     [switch]$IncludeSensitiveNetworkData,
     [int]$IntervalSeconds = 2,
     [int]$DurationMinutes = 60,
+    [ValidateRange(0, 3)]
+    [int]$PingCount = 1,
     [string]$OutputPath = $null
 )
 
@@ -556,9 +558,12 @@ try {
         }
 
         'Watch' {
-            $fwd = @{}
+            $fwd = @{
+                'ToolRoot' = $ToolRoot
+            }
             if ($PSBoundParameters.ContainsKey('IntervalSeconds')) { $fwd['IntervalSeconds'] = $IntervalSeconds }
             if ($PSBoundParameters.ContainsKey('DurationMinutes')) { $fwd['DurationMinutes'] = $DurationMinutes }
+            if ($PSBoundParameters.ContainsKey('PingCount')) { $fwd['PingCount'] = $PingCount }
             if ($PSBoundParameters.ContainsKey('OutputPath') -and -not [string]::IsNullOrWhiteSpace($OutputPath)) {
                 $fwd['OutputPath'] = $OutputPath
             }
@@ -573,7 +578,7 @@ try {
             Write-Host "  -Action BackupDrivers          : 使用 PnPUtil 只读备份驱动至 backups\Drivers"
             Write-Host "  -Action SaveBaseline           : 保存当前网络健康与配置基线 (退出码: 0成功, 1错误)"
             Write-Host "  -Action CompareBaseline        : 与基线比对差异 (退出码: 0无差异, 2有差异, 1错误)"
-            Write-Host "  -Action Watch                  : 纯只读链路采样 (默认每 2 秒一次，持续 60 分钟，它只读不写网络配置)"
+            Write-Host "  -Action Watch                  : 纯只读链路采样 (默认每 2 秒一次，PingCount=1，持续 60 分钟，它只读不写网络配置)"
             Write-Host "  -Action Menu                   : 打开交互式主菜单 (默认)"
             Write-Host "  -IncludeSensitiveNetworkData   : 包含完整 WLAN 与未脱敏数据"
         }
@@ -659,7 +664,13 @@ try {
                         if ($durInput.Trim() -match '^\d+$') {
                             $durVal = [int]$durInput.Trim()
                         }
-                        Start-LinkSampler -IntervalSeconds $intVal -DurationMinutes $durVal
+                        Write-Host "输入网关 Ping 探测次数 (0-3, 默认 1, 0 为完全跳过 ping): " -ForegroundColor Yellow -NoNewline
+                        $pInput = Read-Host
+                        $pVal = 1
+                        if ($pInput.Trim() -match '^[0-3]$') {
+                            $pVal = [int]$pInput.Trim()
+                        }
+                        Start-LinkSampler -ToolRoot $ToolRoot -IntervalSeconds $intVal -DurationMinutes $durVal -PingCount $pVal
                         Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
                     }
                     '0' {

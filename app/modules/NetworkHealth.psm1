@@ -1,4 +1,4 @@
-﻿# ==============================================================================
+﻿﻿# ==============================================================================
 # NetworkHealth.psm1
 # 便携网络只读诊断工具箱 - 纯只读健康状态探测模块
 # 严格遵循只读原则：仅发起外发 TCP 探测与 ICMP Ping，不改动系统状态与协议栈
@@ -128,13 +128,19 @@ function Test-DnsResolution {
 function Start-LinkSampler {
     [CmdletBinding()]
     param(
+        [string]$ToolRoot = $null,
         [int]$IntervalSeconds = 2,
         [int]$DurationMinutes = 60,
+        [ValidateRange(0, 3)]
+        [int]$PingCount = 1,
         [string]$OutputPath = $null
     )
 
     if ([string]::IsNullOrWhiteSpace($OutputPath)) {
-        $outDir = 'E:\Network-Recovery-USB\output\watch'
+        if ([string]::IsNullOrWhiteSpace($ToolRoot)) {
+            $ToolRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+        }
+        $outDir = Join-Path $ToolRoot 'output\watch'
         if (-not (Test-Path -LiteralPath $outDir)) {
             [System.IO.Directory]::CreateDirectory($outDir) | Out-Null
         }
@@ -166,13 +172,14 @@ function Start-LinkSampler {
         'GatewayPingAvgMs',
         'DefaultRouteIfIndex',
         'ProfileName',
-        'IPv4Connectivity'
+        'IPv4Connectivity',
+        'CycleMs'
     )
     $headerLine = $headers -join ','
     $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
     [System.IO.File]::WriteAllText($OutputPath, "$headerLine`n", $utf8NoBom)
 
-    Write-Host "[Start-LinkSampler] 采样器已启动: Interval=${IntervalSeconds}s, Duration=${DurationMinutes}m" -ForegroundColor Green
+    Write-Host "[Start-LinkSampler] 采样器已启动: Interval=${IntervalSeconds}s, PingCount=${PingCount}, Duration=${DurationMinutes}m" -ForegroundColor Green
     Write-Host "[Start-LinkSampler] 输出目标文件: $OutputPath" -ForegroundColor Green
     Write-Host "[Start-LinkSampler] 纯只读采样模式，按 Ctrl+C 可随时停止..." -ForegroundColor Gray
 
@@ -184,15 +191,35 @@ function Start-LinkSampler {
 
     while ((Get-Date) -lt $endTime) {
         $sampleIndex++
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $timestamp = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
 
-        # 1. AdapterStatus / MediaConnectionState / LinkSpeed
+        # 1. GatewayIPv4 & DefaultRouteIfIndex (先获取默认路由以确定活动 ifIndex)
+        $gw = 'ERROR'
+        $ifIndex = 'ERROR'
+        try {
+            $route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction Stop | Sort-Object RouteMetric | Select-Object -First 1
+            if ($route) {
+                if ($null -ne $route.NextHop -and $route.NextHop -ne '') { $gw = $route.NextHop }
+                if ($null -ne $route.ifIndex) { $ifIndex = $route.ifIndex }
+            }
+        } catch {
+            $gw = 'ERROR'
+            $ifIndex = 'ERROR'
+        }
+
+        # 2. AdapterStatus / MediaConnectionState / LinkSpeed (不依赖型号，基于 ifIndex 获取网卡)
         $adapterStatus = 'ERROR'
         $mediaConnectionState = 'ERROR'
         $linkSpeed = 'ERROR'
         $nicName = $null
         try {
-            $nic = Get-NetAdapter -Physical -ErrorAction Stop | Where-Object { $_.InterfaceDescription -match 'MT7922' } | Select-Object -First 1
+            $nic = if ($ifIndex -ne 'ERROR' -and $ifIndex) {
+                Get-NetAdapter -InterfaceIndex $ifIndex -ErrorAction SilentlyContinue | Select-Object -First 1
+            } else { $null }
+            if (-not $nic) {
+                $nic = Get-NetAdapter -Physical -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq 'Up' } | Select-Object -First 1
+            }
             if ($nic) {
                 $nicName = $nic.Name
                 $adapterStatus = if ($null -ne $nic.Status) { $nic.Status.ToString() } else { 'ERROR' }
@@ -205,7 +232,7 @@ function Start-LinkSampler {
             $linkSpeed = 'ERROR'
         }
 
-        # 2. Received*/Sent*/Outbound*
+        # 3. Received*/Sent*/Outbound*
         $rxUnicast = 'ERROR'
         $txUnicast = 'ERROR'
         $rxErrors  = 'ERROR'
@@ -226,33 +253,19 @@ function Start-LinkSampler {
             $rxUnicast = 'ERROR'; $txUnicast = 'ERROR'; $rxErrors = 'ERROR'; $rxDiscard = 'ERROR'; $txErrors = 'ERROR'; $txDiscard = 'ERROR'
         }
 
-        # 3. RxDelta / TxDelta
-        if ($prevRx -eq $null -or $rxUnicast -eq 'ERROR') {
+        # 4. RxDelta / TxDelta ($null 放置在比较左侧)
+        if ($null -eq $prevRx -or $rxUnicast -eq 'ERROR') {
             $rxDelta = 0
         } else {
             $rxDelta = [int64]$rxUnicast - [int64]$prevRx
         }
-        if ($prevTx -eq $null -or $txUnicast -eq 'ERROR') {
+        if ($null -eq $prevTx -or $txUnicast -eq 'ERROR') {
             $txDelta = 0
         } else {
             $txDelta = [int64]$txUnicast - [int64]$prevTx
         }
         if ($rxUnicast -ne 'ERROR') { $prevRx = [int64]$rxUnicast }
         if ($txUnicast -ne 'ERROR') { $prevTx = [int64]$txUnicast }
-
-        # 4. GatewayIPv4 & DefaultRouteIfIndex
-        $gw = 'ERROR'
-        $ifIndex = 'ERROR'
-        try {
-            $route = Get-NetRoute -DestinationPrefix '0.0.0.0/0' -ErrorAction Stop | Sort-Object RouteMetric | Select-Object -First 1
-            if ($route) {
-                if ($null -ne $route.NextHop -and $route.NextHop -ne '') { $gw = $route.NextHop }
-                if ($null -ne $route.ifIndex) { $ifIndex = $route.ifIndex }
-            }
-        } catch {
-            $gw = 'ERROR'
-            $ifIndex = 'ERROR'
-        }
 
         # 5. GatewayArpState
         $arpState = 'ERROR'
@@ -267,45 +280,53 @@ function Start-LinkSampler {
             $arpState = 'ERROR'
         }
 
-        # 6. GatewayPingSuccessCount & GatewayPingAvgMs
+        # 6. GatewayPingSuccessCount & GatewayPingAvgMs (PingCount=0 时跳过并写 SKIPPED)
         $pingSuccess = 'ERROR'
         $pingAvg = 'ERROR'
-        try {
-            if ($gw -ne 'ERROR' -and $gw) {
-                $pings = @(Test-Connection -ComputerName $gw -Count 3 -ErrorAction SilentlyContinue)
-                $pingSuccess = $pings.Count
-                if ($pingSuccess -gt 0) {
-                    $avgMs = ($pings | Measure-Object -Property ResponseTime -Average).Average
-                    $pingAvg = [math]::Round($avgMs, 2)
-                } else {
-                    $pingAvg = 0
+        if ($PingCount -eq 0) {
+            $pingSuccess = 'SKIPPED'
+            $pingAvg = 'SKIPPED'
+        } else {
+            try {
+                if ($gw -ne 'ERROR' -and $gw) {
+                    $pings = @(Test-Connection -ComputerName $gw -Count $PingCount -ErrorAction SilentlyContinue)
+                    $pingSuccess = $pings.Count
+                    if ($pingSuccess -gt 0) {
+                        $avgMs = ($pings | Measure-Object -Property ResponseTime -Average).Average
+                        $pingAvg = [math]::Round($avgMs, 2)
+                    } else {
+                        $pingAvg = 0
+                    }
                 }
+            } catch {
+                $pingSuccess = 'ERROR'
+                $pingAvg = 'ERROR'
             }
-        } catch {
-            $pingSuccess = 'ERROR'
-            $pingAvg = 'ERROR'
         }
 
-        # 7. ProfileName & IPv4Connectivity
+        # 7. ProfileName & IPv4Connectivity (使用 $connProfile 避免与自动变量 $profile 冲突)
         $profName = 'ERROR'
         $v4Conn   = 'ERROR'
         try {
-            $profile = if ($ifIndex -ne 'ERROR' -and $ifIndex) {
+            $connProfile = if ($ifIndex -ne 'ERROR' -and $ifIndex) {
                 Get-NetConnectionProfile -InterfaceIndex $ifIndex -ErrorAction SilentlyContinue | Select-Object -First 1
             } else { $null }
-            if (-not $profile) {
-                $profile = Get-NetConnectionProfile -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $connProfile) {
+                $connProfile = Get-NetConnectionProfile -ErrorAction SilentlyContinue | Select-Object -First 1
             }
-            if ($profile) {
-                if ($profile.Name) { $profName = $profile.Name }
-                if ($profile.IPv4Connectivity) { $v4Conn = $profile.IPv4Connectivity.ToString() }
+            if ($connProfile) {
+                if ($connProfile.Name) { $profName = $connProfile.Name }
+                if ($connProfile.IPv4Connectivity) { $v4Conn = $connProfile.IPv4Connectivity.ToString() }
             }
         } catch {
             $profName = 'ERROR'
             $v4Conn = 'ERROR'
         }
 
-        # Format CSV row
+        $sw.Stop()
+        $cycleMs = $sw.ElapsedMilliseconds
+
+        # Format CSV row (末尾追加 CycleMs)
         $row = @(
             $timestamp,
             $adapterStatus,
@@ -325,14 +346,16 @@ function Start-LinkSampler {
             $pingAvg,
             $ifIndex,
             $profName,
-            $v4Conn
+            $v4Conn,
+            $cycleMs
         ) -join ','
 
         [System.IO.File]::AppendAllText($OutputPath, "$row`n", $utf8NoBom)
 
         # 控制台打印一行简短摘要
-        Write-Host ("[{0}] #{1:D3} | Status={2} ({3}) | RxDelta=+{4} TxDelta=+{5} | GW={6} ARP={7} Ping={8}/3 ({9}ms) | Profile={10} ({11})" -f `
-            $timestamp, $sampleIndex, $adapterStatus, $mediaConnectionState, $rxDelta, $txDelta, $gw, $arpState, $pingSuccess, $pingAvg, $profName, $v4Conn) -ForegroundColor Cyan
+        $pingText = if ($PingCount -eq 0) { "Ping=SKIPPED" } else { "Ping=$pingSuccess/$PingCount (${pingAvg}ms)" }
+        Write-Host ("[{0}] #{1:D3} | Status={2} ({3}) | RxDelta=+{4} TxDelta=+{5} | GW={6} ARP={7} {8} | Profile={9} ({10}) | Cycle={11}ms" -f `
+            $timestamp, $sampleIndex, $adapterStatus, $mediaConnectionState, $rxDelta, $txDelta, $gw, $arpState, $pingText, $profName, $v4Conn, $cycleMs) -ForegroundColor Cyan
 
         if ((Get-Date) -ge $endTime) { break }
         if ($IntervalSeconds -gt 0) {
