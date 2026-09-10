@@ -8,11 +8,14 @@
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [ValidateSet('Diagnose', 'FullHealth', 'Bundle', 'ExportDrivers', 'BackupDrivers', 'Menu', 'Help', 'Timeline', 'SaveBaseline', 'CompareBaseline')]
+    [ValidateSet('Diagnose', 'FullHealth', 'Bundle', 'ExportDrivers', 'BackupDrivers', 'Menu', 'Help', 'Timeline', 'SaveBaseline', 'CompareBaseline', 'Watch')]
     [string]$Action = 'Menu',
     [string]$BaselineFile = $null,
     [int]$HoursBack = 0,
-    [switch]$IncludeSensitiveNetworkData
+    [switch]$IncludeSensitiveNetworkData,
+    [int]$IntervalSeconds = 2,
+    [int]$DurationMinutes = 60,
+    [string]$OutputPath = $null
 )
 
 $ErrorActionPreference = 'Stop'
@@ -552,6 +555,16 @@ try {
             exit $res.ExitCode
         }
 
+        'Watch' {
+            $fwd = @{}
+            if ($PSBoundParameters.ContainsKey('IntervalSeconds')) { $fwd['IntervalSeconds'] = $IntervalSeconds }
+            if ($PSBoundParameters.ContainsKey('DurationMinutes')) { $fwd['DurationMinutes'] = $DurationMinutes }
+            if ($PSBoundParameters.ContainsKey('OutputPath') -and -not [string]::IsNullOrWhiteSpace($OutputPath)) {
+                $fwd['OutputPath'] = $OutputPath
+            }
+            Start-LinkSampler @fwd
+        }
+
         'Help' {
             Write-Host "便携网络诊断工具箱使用帮助:" -ForegroundColor Cyan
             Write-Host "  -Action FullHealth / Diagnose  : 执行纯只读网络健康诊断并输出控制台"
@@ -560,6 +573,7 @@ try {
             Write-Host "  -Action BackupDrivers          : 使用 PnPUtil 只读备份驱动至 backups\Drivers"
             Write-Host "  -Action SaveBaseline           : 保存当前网络健康与配置基线 (退出码: 0成功, 1错误)"
             Write-Host "  -Action CompareBaseline        : 与基线比对差异 (退出码: 0无差异, 2有差异, 1错误)"
+            Write-Host "  -Action Watch                  : 纯只读链路采样 (默认每 2 秒一次，持续 60 分钟，它只读不写网络配置)"
             Write-Host "  -Action Menu                   : 打开交互式主菜单 (默认)"
             Write-Host "  -IncludeSensitiveNetworkData   : 包含完整 WLAN 与未脱敏数据"
         }
@@ -583,9 +597,10 @@ try {
                 Write-Host "   [4] Analyze Disconnection Timeline (断网时间线关联分析)" -ForegroundColor White
                 Write-Host "   [5] Save Health Baseline (保存当前健康基线)" -ForegroundColor White
                 Write-Host "   [6] Compare With Baseline (与基线比对差异)" -ForegroundColor White
+                Write-Host "   [7] Start Read-Only Link Sampler (纯只读链路采样，不会修改任何设置)" -ForegroundColor White
                 Write-Host "   [0] Exit (退出工具箱)" -ForegroundColor Gray
                 Write-Host "=======================================================================" -ForegroundColor Cyan
-                Write-Host "请输入选项数字 [0-6]: " -ForegroundColor Yellow -NoNewline
+                Write-Host "请输入选项数字 [0-7]: " -ForegroundColor Yellow -NoNewline
                 $choice = Read-Host
 
                 switch ($choice.Trim()) {
@@ -629,6 +644,22 @@ try {
                         } else {
                             Export-NetworkDrivers -ToolRoot $ToolRoot
                         }
+                        Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
+                    }
+                    '7' {
+                        Write-Host "输入采样间隔秒数 (默认 2): " -ForegroundColor Yellow -NoNewline
+                        $intInput = Read-Host
+                        $intVal = 2
+                        if ($intInput.Trim() -match '^\d+$' -and [int]$intInput.Trim() -gt 0) {
+                            $intVal = [int]$intInput.Trim()
+                        }
+                        Write-Host "输入采样持续分钟数 (默认 60, 0 为持续到按 Ctrl+C): " -ForegroundColor Yellow -NoNewline
+                        $durInput = Read-Host
+                        $durVal = 60
+                        if ($durInput.Trim() -match '^\d+$') {
+                            $durVal = [int]$durInput.Trim()
+                        }
+                        Start-LinkSampler -IntervalSeconds $intVal -DurationMinutes $durVal
                         Write-Host "`n按回车键返回菜单..."; Read-Host | Out-Null
                     }
                     '0' {

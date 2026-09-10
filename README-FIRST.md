@@ -69,6 +69,8 @@ Network-Recovery-USB\
      调用 `Save-NetworkBaseline`，采集当前网络配置与健康状态结构化快照并保存至 `output\baseline\baseline-yyyyMMdd-HHmmss.json`，同时更新纯相对文件名指针 `output\baseline\latest.txt`（严格无盘符）。退出码：0 成功，1 错误。
    - `[6] Compare With Baseline (与基线比对差异)`：
      调用 `Compare-NetworkBaseline`，支持交互输入指定基线文件或直接回车比对由 `latest.txt` 指向的最近基线。精准比对 13 项核心稳定字段与 10 项易变参考指标，明细自动落盘写入 `logs\baseline_compare_*.log`。退出码：0 稳定字段无差异，2 发现核心稳定字段差异 (潜在网络异常)，1 执行错误。
+   - `[7] Start Read-Only Link Sampler (纯只读链路采样，不会修改任何设置)`：
+     调用 `Start-LinkSampler`，对物理网络适配器状态、收发包及丢包错误计数、流量吞吐增量、网关 ARP 状态与 ICMP 响应、网络配置连通性等 19 项核心指标进行高频只读连续采样。默认采样间隔为 2 秒，持续 60 分钟（支持自定义间隔与时长，或时长为 0 持续运行至按 Ctrl+C 停止）。采样记录实时按行追加至 `output\watch\link-sample-<yyyyMMdd-HHmmss>.csv`，它只读不写网络配置。
    - `[0] Exit (退出工具箱)`：
      打印 `Exiting.`，跳出主循环并释放单实例互斥锁退出。
 
@@ -79,6 +81,7 @@ Network-Recovery-USB\
    - `-Action BackupDrivers` / `-Action ExportDrivers`：导出第三方网络驱动至 `backups\`
    - `-Action SaveBaseline`：保存当前网络健康与配置基线 (退出码: 0成功, 1错误)
    - `-Action CompareBaseline [-BaselineFile <文件名或路径>]`：与基线比对差异 (退出码: 0无差异, 2有差异, 1错误)
+   - `-Action Watch [-IntervalSeconds N] [-DurationMinutes M] [-OutputPath <路径>]`：启动纯只读链路采样 (默认每 2 秒一次，持续 60 分钟，输出至 `output\watch\`，它只读不写网络配置)
    - `-Action Menu`：打开交互式主菜单 (默认)
    - `-Action Help`：查看帮助信息
 

@@ -1,0 +1,14 @@
+Timestamp,AdapterStatus,MediaConnectionState,LinkSpeed,ReceivedUnicastPackets,SentUnicastPackets,ReceivedPacketErrors,ReceivedDiscardedPackets,OutboundPacketErrors,OutboundDiscardedPackets,RxDelta,TxDelta,GatewayIPv4,GatewayArpState,GatewayPingSuccessCount,GatewayPingAvgMs,DefaultRouteIfIndex,ProfileName,IPv4Connectivity
+2026-09-10 16:18:15.651,Up,Connected,300 Mbps,4169812,4313041,0,0,0,0,0,0,192.168.0.1,Probe,3,6.33,12,702,Internet
+2026-09-10 16:18:25.948,Up,Connected,300 Mbps,4170611,4313912,0,0,0,0,799,871,192.168.0.1,Reachable,3,6.67,12,702,Internet
+2026-09-10 16:18:30.379,Up,Connected,300 Mbps,4171131,4314362,0,0,0,0,520,450,192.168.0.1,Reachable,3,5.33,12,702,Internet
+2026-09-10 16:18:34.655,Up,Connected,300 Mbps,4171300,4314490,0,0,0,0,169,128,192.168.0.1,Reachable,3,6.33,12,702,Internet
+2026-09-10 16:18:39.049,Up,Connected,300 Mbps,4171528,4314719,0,0,0,0,228,229,192.168.0.1,Reachable,3,5.67,12,702,Internet
+2026-09-10 16:18:43.322,Up,Connected,300 Mbps,4171711,4314892,0,0,0,0,183,173,192.168.0.1,Reachable,3,18.33,12,702,Internet
+2026-09-10 16:18:47.713,Up,Connected,300 Mbps,4172014,4315315,0,0,0,0,303,423,192.168.0.1,Reachable,3,4,12,702,Internet
+2026-09-10 16:18:51.979,Up,Connected,300 Mbps,4172132,4315399,0,0,0,0,118,84,192.168.0.1,Reachable,3,5,12,702,Internet
+2026-09-10 16:18:56.286,Up,Connected,300 Mbps,4172326,4315564,0,0,0,0,194,165,192.168.0.1,Reachable,3,4.33,12,702,Internet
+2026-09-10 16:19:00.532,Up,Connected,300 Mbps,4172507,4315710,0,0,0,0,181,146,192.168.0.1,Reachable,3,17.33,12,702,Internet
+2026-09-10 16:19:04.907,Up,Connected,300 Mbps,4172697,4315877,0,0,0,0,190,167,192.168.0.1,Reachable,3,6,12,702,Internet
+2026-09-10 16:19:09.182,Up,Connected,300 Mbps,4172847,4316002,0,0,0,0,150,125,192.168.0.1,Reachable,3,3,12,702,Internet
+2026-09-10 16:19:13.460,Up,Connected,300 Mbps,4173052,4316131,0,0,0,0,205,129,192.168.0.1,Reachable,3,7.33,12,702,Internet
