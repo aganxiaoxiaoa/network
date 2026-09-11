@@ -6,7 +6,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0app\NetworkSafeRec
 set "RC=%ERRORLEVEL%"
 echo.
 echo [Exit Code] %RC%
-echo   0 = recovered   1 = environment/error   2 = still offline   3 = cancelled
+echo   0 = OK (recovered, already online, or -WhatIf dry run)
+echo   1 = environment/error, nothing was changed
+echo   2 = attempted but still offline
+echo   3 = cancelled by user
 echo.
 pause
-endlocal
+endlocal & exit /b %RC%

@@ -29,7 +29,10 @@ param(
     [int]$ConnectTimeoutSeconds = 0,
 
     [ValidateRange(5, 300)]
-    [int]$DhcpWaitSeconds = 0
+    [int]$DhcpWaitSeconds = 0,
+
+    # 内部使用：标记本进程是由 UAC 提权重新启动的，结束前暂停以便用户看到结果
+    [switch]$FromElevation
 )
 
 $ErrorActionPreference = 'Stop'
@@ -69,19 +72,24 @@ if ($Action -eq 'Help') {
 Import-Module (Join-Path $ModulesDir 'SafeRecoveryObservation.psm1') -Force
 Import-Module (Join-Path $ModulesDir 'SafeRecoveryActions.psm1') -Force
 
-# 恢复操作需要管理员权限 (ipconfig /renew)；只读预检不需要
-if ($Action -eq 'Recover' -and -not (Test-IsAdmin)) {
+# 恢复操作需要管理员权限 (ipconfig /renew)；只读预检与 -WhatIf 预演都不需要
+if ($Action -eq 'Recover' -and -not $WhatIfPreference -and -not (Test-IsAdmin)) {
     Write-Host '[提示] 执行 DHCP 续租需要管理员权限，正在请求 UAC 提权...' -ForegroundColor Yellow
-    $argumentList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', "-File `"$PSCommandPath`"", '-Action Recover')
+    $argumentList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', "-File `"$PSCommandPath`"", '-Action Recover', '-FromElevation')
     if ($PSBoundParameters.ContainsKey('TargetProfile')) { $argumentList += "-TargetProfile $TargetProfile" }
     if ($PSBoundParameters.ContainsKey('InterfaceGuid')) { $argumentList += "-InterfaceGuid `"$InterfaceGuid`"" }
     if ($PSBoundParameters.ContainsKey('ConnectTimeoutSeconds')) { $argumentList += "-ConnectTimeoutSeconds $ConnectTimeoutSeconds" }
     if ($PSBoundParameters.ContainsKey('DhcpWaitSeconds')) { $argumentList += "-DhcpWaitSeconds $DhcpWaitSeconds" }
-    if ($PSBoundParameters.ContainsKey('WhatIf')) { $argumentList += '-WhatIf' }
 
     try {
         $process = Start-Process -FilePath 'powershell.exe' -ArgumentList ($argumentList -join ' ') -Verb RunAs -PassThru -Wait
-        exit $process.ExitCode
+        $childExit = $process.ExitCode
+        # ExitCode 为 $null 时绝不当成成功
+        if ($null -eq $childExit) {
+            Write-Host '[警告] 未能取得提权进程的退出码，按失败处理。' -ForegroundColor Yellow
+            exit 1
+        }
+        exit $childExit
     } catch {
         Write-Host '[中止] 未获得管理员权限，未执行任何网络修改。' -ForegroundColor Red
         exit 1
@@ -125,20 +133,26 @@ try {
             if (-not [string]::IsNullOrWhiteSpace($InterfaceGuid)) { $forward['InterfaceGuid'] = $InterfaceGuid }
             if ($ConnectTimeoutSeconds -gt 0) { $forward['ConnectTimeoutSeconds'] = $ConnectTimeoutSeconds }
             if ($DhcpWaitSeconds -gt 0) { $forward['DhcpWaitSeconds'] = $DhcpWaitSeconds }
+            if ($null -ne $preferred) { $forward['ProfileExplicitlyRequested'] = $true }
             if ($PSBoundParameters.ContainsKey('WhatIf')) { $forward['WhatIf'] = $WhatIfPreference }
 
             $result = Invoke-SafeNetworkRecovery @forward
             $exitCode = $result.ExitCode
+            $isWhatIf = ($null -ne $result.PSObject.Properties['WhatIf'] -and $result.WhatIf -eq $true)
 
             Write-Host ''
-            if ($result.Succeeded) {
+            if ($isWhatIf) {
+                Write-Host '[结果] -WhatIf 预演完成: 未修改任何网络设置。' -ForegroundColor Green
+            } elseif ($result.Succeeded -and -not $result.MutationPerformed) {
+                Write-Host "[结果] 当前网络已可用 (配置文件: $($result.ProfileUsed))，未做任何修改。" -ForegroundColor Green
+            } elseif ($result.Succeeded) {
                 Write-Host "[结果] 已恢复上网，当前使用配置文件: $($result.ProfileUsed)" -ForegroundColor Green
             } elseif ($exitCode -eq 3) {
                 Write-Host '[结果] 已取消，网络设置未被修改。' -ForegroundColor Yellow
             } elseif ($exitCode -eq 2) {
                 Write-Host '[结果] 恢复失败，网络仍不可用。已停止，不会执行任何其他修复手段。' -ForegroundColor Red
             } elseif ($exitCode -ne 0) {
-                Write-Host '[结果] 未能执行恢复，请查看上方中止原因。' -ForegroundColor Red
+                Write-Host '[结果] 未能执行恢复 (未做任何修改)，请查看上方中止原因。' -ForegroundColor Red
             }
             if (-not [string]::IsNullOrWhiteSpace($result.LogPath)) {
                 Write-Host "[日志] $($result.LogPath)" -ForegroundColor Gray
@@ -153,6 +167,14 @@ try {
         $script:Mutex.ReleaseMutex()
         $script:Mutex.Dispose()
     }
+}
+
+# 由 UAC 提权重新启动的进程拥有独立控制台，退出即关闭；暂停以便用户看清结果与日志路径
+if ($FromElevation) {
+    Write-Host ''
+    Write-Host "退出码: $exitCode  (0 成功 | 1 未修改的环境错误 | 2 仍不可用 | 3 已取消)" -ForegroundColor Gray
+    Write-Host '按回车键关闭本窗口...' -ForegroundColor Yellow -NoNewline
+    Read-Host | Out-Null
 }
 
 exit $exitCode

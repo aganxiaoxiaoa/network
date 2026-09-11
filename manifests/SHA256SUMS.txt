@@ -1,7 +1,7 @@
 # ==============================================================================
 # 便携网络诊断工具箱 (Network-Recovery-USB) - 核心受控静态文件 SHA-256 完整性清单
 # ==============================================================================
-# 1. 范围说明：本清单覆盖仓库根目录下所有受控核心代码、模块、文档、配置及隔离区静态归档文件（共 45 项，含独立受限恢复子系统的 5 个文件）。
+# 1. 范围说明：本清单覆盖仓库根目录下所有受控核心代码、模块、文档、配置及隔离区静态归档文件（共 46 项，含独立受限恢复子系统的 5 个文件与 1 个自查测试）。
 # 2. 排除说明：本清单已显式排除运行时动态生成的 logs/ 目录、output/ 目录以及清单自身
 #    (manifests/file-inventory-after.csv 与 manifests/SHA256SUMS.txt)，避免动态日志和基线数据影响静态完整性校验。
 # 3. 格式规范：全量条目采用纯 LF (\n) 换行且无 BOM 的跨平台通用格式，路径采用统一正斜杠相对路径（严格兼容 Linux/macOS 与 Windows 校验工具）。
@@ -20,11 +20,11 @@
 abe8b7e4a9ba6440d250733437fd7e279685173888455c18e6a38ea209ff3e9d  app/modules/NetworkBaseline.psm1
 dc7434146102042e66a0957a6df6e4e1b0a8e11123f5bf53c7f70f784c4aa02f  app/modules/NetworkHealth.psm1
 c16742f162c5128d08bf4242df919c186780e52d6521ecf113bf73af4d6ef434  app/modules/NetworkInventory.psm1
-d96ff9df6bb6c39e84acfe391489c07579e0109e94e0875d8274e3146b69b7bb  app/modules/SafeRecoveryActions.psm1
-4edf55c73b583c44d48ea12164003f476a60bcb3e4f9503bd89b371843315a9b  app/modules/SafeRecoveryObservation.psm1
+747db58f0c9c5fd4326f5c31444aa165f04bd59a018dc8e1eb734582061476b5  app/modules/SafeRecoveryActions.psm1
+df501d58f6452d38057ee0f5ce4565ca54b1f19346b0b7788a75bcbfb3c8ed2b  app/modules/SafeRecoveryObservation.psm1
 89cfd310734fb3f14da12e29dc0f03956f5460579c67ad64ab03eccabdeffad5  app/NetworkDiagnostics.ps1
 3180962293e9daa0d5c6d5f22c0a387f8aa6fdb37f2d6a320bc5f9adfc7b3e5e  app/NetworkRecovery.Config.psd1
-519da302605c5aa9955da78d3cc7e00e4d887373962db53ceaddfe5f60c658fc  app/NetworkSafeRecovery.ps1
+2c9887726bab5a629b12615c84dd0fe756f2a9f84e89881720e04b42aeef3b0f  app/NetworkSafeRecovery.ps1
 0ca24b2d446d1fd7e8609169f947894d957cdc30b728f3b804f5c56747b467ba  app/SafeRecovery.Config.psd1
 2cef59e0bc7f24c5a6b259f2df215413d8cf4325e495458e004340855414367b  backups/Network-Reference-Watchdog/auto_network_recovery.ps1.bak-20260813
 905f2e8e7b328d2f73febe14bee70f95d770f103f26a1f07585d5177c25bdf34  backups/Network-Reference-Watchdog/auto_network_recovery.ps1.bak-before-adapter-fix-20260825-1750
@@ -35,9 +35,9 @@ d36696982f3727f2e9c81f06ed71a21c9941eab7feb84e92e57d9c3e5d6a7784  backups/Networ
 d143d6082cba45d5f9943e83082ba96fde37cf0fc099f538da32322d5b12ea04  backups/Network-Reference-Watchdog/network_recovery.log
 3b13543cc30014a895e6dd28263d28302b82dd53e821a3c8af48dacf55607896  backups/Network-Reference-Watchdog/network_recovery.log.1
 575eb1b16aa20063dcb134d5af618a132a12dcc6d6046020838ed4943907fa50  backups/Network-Reference-Watchdog/README.md
-24f51ee4de3237e9b4e48b5fb5bc604ad4074a67fb5399a69720e13d601a8f31  docs/安全边界.md
+fbe7e569869eac150758f530c3c2de4ec6564f326989beb39723a29e2d36426e  docs/安全边界.md
 14ea2fd489ed16d22875ea5dd3a6b984df9b8117a936a4c24d02fed80d77a960  docs/官方资料.md
-598ab4d7cb814ce0e6ae17b898951e31c5598f24b32ec996e922c2b8c98cf294  docs/使用说明.md
+8104c66732c4a50a517b0090ef2b5e23567287b7877f9ac25a3cfbd8d9d4d50a  docs/使用说明.md
 b951c025117cc0b917bd00c343f700ebc34c8e68f193f73f1cf832eee7797e11  docs/事故调查报告.md
 d0ba8035d99779db0446b1b136a0f1dd6218beaf7a20dc3955f551b97cfb88f6  manifests/file-inventory-before.csv
 fa945e7a9d686feb99b98e694d0921096df26298fd93d5ff82fc440ac2a45330  quarantine/rebuilt-write-capable-20260910-0405/modules/NetworkDiagnostics.psm1
@@ -57,6 +57,7 @@ ab1d59a0027b580101b15a9ab88282d314a8721f40d60ef1325c11f6252ed20e  quarantine/uns
 b1864564d87e0979ffd3a0e61f90fe1e607dec933f448edcbc95568147d6d491  quarantine/unsafe-version-20260910-0130/README.md
 c0ef9a9208a2724824150e574754c632bb6e16c5a04b57bc3af18bbb47366b64  quarantine/unsafe-version-20260910-0130/Start-NetworkRecovery.cmd.disabled
 e549070b831105a345295192093c17dfbd071fbe67d87e7113a5b52a8f6eb666  quarantine/unsafe-version-20260910-0130/WARNING.txt
-069633f3b02a026a68c3d66d2475c22c2932b8a415d5c968660595b0d9fb81dc  README-FIRST.md
+80b8dc1a3a6622e40d28cf32dec64f3d1792ad48e121aec62dd0eb456b8b9cc9  tests/Invoke-SafeRecoveryTests.ps1
+a88b6ec85bbe73b4b8b8c7504d385b2cee1abc5c9dd23179d77496d9b7abcaae  README-FIRST.md
 f9e35d5727f3788c58c976985caf84a6a482b61d2645310809e85c3c60457da4  START-DIAGNOSIS.cmd
-a431ac379faefc297365b837d1543454f0b45085af4fb73795bf318a13496ff2  START-SAFE-RECOVERY.cmd
+4ff1f7aff0b836197db6d45ba1748e97c9c96d59a2de058dabf30ce424c75e79  START-SAFE-RECOVERY.cmd

@@ -17,6 +17,22 @@
 
 Set-StrictMode -Version 2.0
 
+# 【模块调用契约】本模块中返回集合的函数 (Select-SafeRecoveryWlanCandidate、
+# ConvertFrom-SafeRecoveryProfileList、ConvertFrom-SafeRecoveryWlanInterface、
+# Get-SafeRecoveryInstalledProfile、Get-SafeRecoveryProfileOrder) 遵循 PowerShell 的
+# 枚举输出语义：结果为空时调用方会收到 $null。调用方必须一律用 @(...) 包裹，
+# 否则在 StrictMode 2.0 下访问 .Count 会抛错。本模块与写操作层内部所有调用点均已包裹。
+
+# 代码级硬编码白名单：即使有人编辑 SafeRecovery.Config.psd1，也无法把授权范围扩大到
+# 701 / 702 以外。配置文件只能是这个集合的子集。
+$script:HardCodedAllowedProfiles = @('701', '702')
+
+function Get-SafeRecoveryHardCodedAllowedProfile {
+    [CmdletBinding()]
+    param()
+    return $script:HardCodedAllowedProfiles
+}
+
 # ------------------------------------------------------------------------------
 # 严格模式安全属性读取 (CIM 对象可能缺少属性，直接访问会在 StrictMode 2.0 下抛错)
 # ------------------------------------------------------------------------------
@@ -63,11 +79,16 @@ function Assert-SafeRecoveryConfig {
         throw '配置无效: AllowedProfiles 不能为空，安全恢复必须有明确的配置文件白名单。'
     }
     foreach ($name in $allowed) {
-        if ([string]::IsNullOrWhiteSpace([string]$name)) {
+        $text = [string]$name
+        if ([string]::IsNullOrWhiteSpace($text)) {
             throw '配置无效: AllowedProfiles 中存在空白项。'
         }
-        if ([string]$name -notmatch '^[A-Za-z0-9_-]{1,32}$') {
-            throw "配置无效: 配置文件名称 '$name' 含非受控字符，拒绝加载。"
+        if ($text -notmatch '^[A-Za-z0-9_-]{1,32}$') {
+            throw "配置无效: 配置文件名称 '$text' 含非受控字符，拒绝加载。"
+        }
+        # 代码级白名单是不可逾越的上界：配置只能缩小范围，不能扩大
+        if ($script:HardCodedAllowedProfiles -notcontains $text) {
+            throw "配置无效: '$text' 超出代码级硬编码授权白名单 ($($script:HardCodedAllowedProfiles -join ', '))，拒绝加载。"
         }
     }
 
@@ -205,6 +226,9 @@ function Invoke-SafeRecoveryReadOnlyNetsh {
     $netsh = Join-Path $env:SystemRoot 'System32\netsh.exe'
     if (-not (Test-Path -LiteralPath $netsh)) { $netsh = 'netsh.exe' }
 
+    # Windows PowerShell 5.1 下 $ErrorActionPreference='Stop' + 2>&1 会把原生命令的 stderr
+    # 变成终止性 NativeCommandError，导致无法读取真实退出码，因此在此局部降级。
+    $ErrorActionPreference = 'Continue'
     $global:LASTEXITCODE = 0
     $output = & $netsh @ArgumentList 2>&1
     $exitCode = $LASTEXITCODE
@@ -253,6 +277,70 @@ function Get-SafeRecoveryInstalledProfile {
 }
 
 # ------------------------------------------------------------------------------
+# 从 netsh wlan show interfaces 读取「WLAN 服务眼中」的当前配置文件
+# 只提取 Name 与 Profile 两个字段；绝不提取 BSSID 等敏感信息
+# ------------------------------------------------------------------------------
+function ConvertFrom-SafeRecoveryWlanInterface {
+    [CmdletBinding()]
+    param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Output)
+
+    $blocks = New-Object System.Collections.Generic.List[object]
+    $currentName = $null
+    $currentProfile = $null
+    $hasCurrent = $false
+
+    foreach ($line in ($Output -split "`r?`n")) {
+        $separatorIndex = $line.IndexOf(':')
+        if ($separatorIndex -lt 1) { continue }
+
+        $label = $line.Substring(0, $separatorIndex).Trim()
+        $value = $line.Substring($separatorIndex + 1).Trim()
+        if ([string]::IsNullOrWhiteSpace($value)) { continue }
+
+        # 接口名称行标志着一个新的接口块开始 (英文 Name / 简体 名称 / 繁体 名稱)
+        if ($label -match '^(?i)(name|名称|名稱)$') {
+            if ($hasCurrent) {
+                $blocks.Add([pscustomobject]@{ Name = $currentName; Profile = $currentProfile })
+            }
+            $currentName = $value
+            $currentProfile = $null
+            $hasCurrent = $true
+            continue
+        }
+        # 配置文件行；必须排除 SSID / BSSID 等标签，绝不采集 BSSID
+        if ($label -match '(?i)^(profile|配置文件|設定檔)' -and $label -notmatch '(?i)ssid') {
+            $currentProfile = $value
+            $hasCurrent = $true
+        }
+    }
+    if ($hasCurrent) {
+        $blocks.Add([pscustomobject]@{ Name = $currentName; Profile = $currentProfile })
+    }
+    return $blocks.ToArray()
+}
+
+function Get-SafeRecoveryWlanProfileOnInterface {
+    [CmdletBinding()]
+    param([Parameter(Mandatory = $true)][string]$InterfaceName)
+
+    try {
+        $result = Invoke-SafeRecoveryReadOnlyNetsh -ArgumentList @('wlan', 'show', 'interfaces')
+        if ($result.ExitCode -ne 0) { return $null }
+
+        $blocks = @(ConvertFrom-SafeRecoveryWlanInterface -Output $result.Output)
+        if ($blocks.Count -eq 0) { return $null }
+
+        $matched = @($blocks | Where-Object { $_.Name -eq $InterfaceName })
+        if ($matched.Count -eq 1) { return $matched[0].Profile }
+        # 只有一个接口块时，名称本地化差异不应导致读不到配置文件
+        if ($blocks.Count -eq 1) { return $blocks[0].Profile }
+        return $null
+    } catch {
+        return $null
+    }
+}
+
+# ------------------------------------------------------------------------------
 # 无线网卡识别 (零个或多个候选时必须中止，绝不猜测)
 # ------------------------------------------------------------------------------
 function Test-SafeRecoveryIsWirelessAdapter {
@@ -264,14 +352,19 @@ function Test-SafeRecoveryIsWirelessAdapter {
     if ((Get-SafeRecoveryPropertyValue -InputObject $Adapter -Name 'Virtual') -eq $true) { return $false }
     if ((Get-SafeRecoveryPropertyValue -InputObject $Adapter -Name 'HardwareInterface') -eq $false) { return $false }
 
+    # ifType 71 = IEEE 802.11 无线
     $interfaceType = Get-SafeRecoveryPropertyValue -InputObject $Adapter -Name 'InterfaceType'
     if ($null -ne $interfaceType -and "$interfaceType" -match '^\d+$' -and [int]$interfaceType -eq 71) {
         return $true
     }
 
-    foreach ($propertyName in @('PhysicalMediaType', 'MediaType')) {
+    # NDIS 物理介质：9 = NdisPhysicalMediumNative802_11 (字符串与数值两种形态都要覆盖)
+    foreach ($propertyName in @('PhysicalMediaType', 'MediaType', 'NdisPhysicalMedium')) {
         $value = Get-SafeRecoveryPropertyValue -InputObject $Adapter -Name $propertyName
-        if ($value -is [string] -and $value -match '802\.11') { return $true }
+        if ($null -eq $value) { continue }
+        $text = [string]$value
+        if ($text -match '802\.11') { return $true }
+        if ($propertyName -ne 'MediaType' -and $text -match '^\d+$' -and [int]$text -eq 9) { return $true }
     }
     return $false
 }
@@ -374,8 +467,10 @@ function Get-SafeRecoveryInterfaceState {
         throw '目标网卡已不再被识别为物理无线网卡，安全恢复已中止。'
     }
 
+    $adapterName = [string](Get-SafeRecoveryPropertyValue -InputObject $adapter -Name 'Name')
     $interfaceIndex = [int](Get-SafeRecoveryPropertyValue -InputObject $adapter -Name 'InterfaceIndex')
 
+    # $null 表示查询失败 (与「明确未启用 DHCP」必须区分，后者才是静态 IP)
     $dhcpEnabled = $null
     try {
         $ipInterface = Get-NetIPInterface -InterfaceIndex $interfaceIndex -AddressFamily IPv4 -ErrorAction Stop
@@ -398,6 +493,7 @@ function Get-SafeRecoveryInterfaceState {
         $ipv4Address = $null
     }
 
+    # NLA (网络位置感知) 视角的网络名称：可能滞后，也可能出现 "701 2" 这类去重后缀
     $connectedProfile = $null
     $ipv4Connectivity = $null
     try {
@@ -409,6 +505,9 @@ function Get-SafeRecoveryInterfaceState {
     } catch {
         $connectedProfile = $null
     }
+
+    # WLAN 服务视角的配置文件名称：关联状态的权威来源
+    $wlanProfile = Get-SafeRecoveryWlanProfileOnInterface -InterfaceName $adapterName
 
     $gateway = $null
     try {
@@ -433,12 +532,13 @@ function Get-SafeRecoveryInterfaceState {
 
     return [pscustomobject]@{
         Timestamp            = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss.fff')
-        AdapterName          = [string](Get-SafeRecoveryPropertyValue -InputObject $adapter -Name 'Name')
+        AdapterName          = $adapterName
         InterfaceIndex       = $interfaceIndex
         InterfaceGuid        = [string](Get-SafeRecoveryPropertyValue -InputObject $adapter -Name 'InterfaceGuid')
         Status               = [string](Get-SafeRecoveryPropertyValue -InputObject $adapter -Name 'Status')
         MediaConnectionState = [string](Get-SafeRecoveryPropertyValue -InputObject $adapter -Name 'MediaConnectionState')
         ConnectedProfile     = $connectedProfile
+        WlanProfile          = $wlanProfile
         IPv4Connectivity     = $ipv4Connectivity
         DhcpEnabled          = $dhcpEnabled
         IPv4Address          = $ipv4Address
@@ -447,6 +547,38 @@ function Get-SafeRecoveryInterfaceState {
         HasDefaultRoute      = (-not [string]::IsNullOrWhiteSpace($gateway))
         GatewayPing          = $gatewayPing
     }
+}
+
+# ------------------------------------------------------------------------------
+# 配置文件匹配与健康度判定
+# ------------------------------------------------------------------------------
+function Test-SafeRecoveryProfileMatch {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]$State,
+        [Parameter(Mandatory = $true)][string]$ExpectedProfile
+    )
+
+    # WLAN 服务与 NLA 任一确认即视为已关联：NLA 名称可能滞后或带去重后缀，
+    # 若只信任 NLA，会把「其实连上了」误判为失败并触发不必要的切换。
+    foreach ($propertyName in @('WlanProfile', 'ConnectedProfile')) {
+        $value = [string](Get-SafeRecoveryPropertyValue -InputObject $State -Name $propertyName)
+        if ($value -eq $ExpectedProfile) { return $true }
+    }
+    return $false
+}
+
+function Get-SafeRecoveryActiveAllowedProfile {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]$State,
+        [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$AllowedProfile
+    )
+
+    foreach ($name in $AllowedProfile) {
+        if (Test-SafeRecoveryProfileMatch -State $State -ExpectedProfile $name) { return $name }
+    }
+    return $null
 }
 
 function Test-SafeRecoveryConnectionHealthy {
@@ -463,8 +595,7 @@ function Test-SafeRecoveryConnectionHealthy {
         $reasons.Add("无线介质状态不是 Connected (当前: $mediaState)")
     }
 
-    $connectedProfile = [string](Get-SafeRecoveryPropertyValue -InputObject $State -Name 'ConnectedProfile')
-    if ($connectedProfile -ne $ExpectedProfile) {
+    if (-not (Test-SafeRecoveryProfileMatch -State $State -ExpectedProfile $ExpectedProfile)) {
         $reasons.Add("当前网络不是目标配置文件 $ExpectedProfile")
     }
 
@@ -531,13 +662,15 @@ function Write-SafeRecoveryStateSnapshot {
         [Parameter(Mandatory = $true)][AllowEmptyCollection()][string[]]$AllowedProfile
     )
 
-    $profileText = Format-SafeRecoveryProfileName -Name ([string](Get-SafeRecoveryPropertyValue -InputObject $State -Name 'ConnectedProfile')) -AllowedProfile $AllowedProfile
+    $nlaText = Format-SafeRecoveryProfileName -Name ([string](Get-SafeRecoveryPropertyValue -InputObject $State -Name 'ConnectedProfile')) -AllowedProfile $AllowedProfile
+    $wlanText = Format-SafeRecoveryProfileName -Name ([string](Get-SafeRecoveryPropertyValue -InputObject $State -Name 'WlanProfile')) -AllowedProfile $AllowedProfile
     $fields = @(
         "Adapter=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'AdapterName')",
         "IfIndex=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'InterfaceIndex')",
         "Status=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'Status')",
         "Media=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'MediaConnectionState')",
-        "Profile=$profileText",
+        "WlanProfile=$wlanText",
+        "NlaProfile=$nlaText",
         "IPv4=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'IPv4Address')",
         "PrefixOrigin=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'PrefixOrigin')",
         "Dhcp=$(Get-SafeRecoveryPropertyValue -InputObject $State -Name 'DhcpEnabled')",
@@ -549,6 +682,7 @@ function Write-SafeRecoveryStateSnapshot {
 }
 
 Export-ModuleMember -Function @(
+    'Get-SafeRecoveryHardCodedAllowedProfile',
     'Get-SafeRecoveryPropertyValue',
     'Get-SafeRecoveryConfig',
     'Assert-SafeRecoveryConfig',
@@ -558,12 +692,16 @@ Export-ModuleMember -Function @(
     'Invoke-SafeRecoveryReadOnlyNetsh',
     'ConvertFrom-SafeRecoveryProfileList',
     'Get-SafeRecoveryInstalledProfile',
+    'ConvertFrom-SafeRecoveryWlanInterface',
+    'Get-SafeRecoveryWlanProfileOnInterface',
     'Test-SafeRecoveryIsWirelessAdapter',
     'Select-SafeRecoveryWlanCandidate',
     'Resolve-SafeRecoveryWlanAdapter',
     'Test-SafeRecoveryIPv4Usable',
     'Format-SafeRecoveryProfileName',
     'Get-SafeRecoveryInterfaceState',
+    'Test-SafeRecoveryProfileMatch',
+    'Get-SafeRecoveryActiveAllowedProfile',
     'Test-SafeRecoveryConnectionHealthy',
     'New-SafeRecoveryLogSession',
     'Write-SafeRecoveryLog',
